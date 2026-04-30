@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import reportData from "../../data-samples/sample-report.json";
+import generatedReportData from "../../data-samples/generated-report.json";
 import FeedCard from "./components/FeedCard";
 import SectionHeader from "./components/SectionHeader";
 import StatCard from "./components/StatCard";
@@ -17,11 +18,113 @@ import {
   buildQuestionItems,
   buildQuickStats,
   buildSummaryCards,
+  collectDisplayTags,
+  formatNumber,
+  formatRelativeDate,
+  getTagTone,
 } from "./utils/report";
 
+function FilterGroup({ title, values, selectedValue, onSelect }) {
+  return (
+    <div className="filter-group">
+      <div className="filter-group-title">{title}</div>
+      <div className="filter-chip-row">
+        <button
+          type="button"
+          className={`filter-chip ${selectedValue === "全部" ? "is-active" : ""}`}
+          onClick={() => onSelect("全部")}
+        >
+          全部
+        </button>
+        {values.map((value) => (
+          <button
+            key={value}
+            type="button"
+            className={`filter-chip ${selectedValue === value ? "is-active" : ""}`}
+            onClick={() => onSelect(value)}
+          >
+            {value}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DetailPanel({ item, feedbackAction }) {
+  if (!item) {
+    return (
+      <div className="detail-panel detail-empty">
+        <strong>还没有选中案例</strong>
+        <div className="subtle">点击下方任意卡片的标题或“查看详情”，这里会显示更完整的案例信息。</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="detail-panel">
+      <div className="detail-cover-wrap">
+        <img className="detail-cover" src={item.cover_url} alt={item.title} />
+      </div>
+      <div className="detail-body">
+        <div className="detail-header">
+          <div>
+            <div className="eyebrow detail-platform">{item.platform_label || item.platform}</div>
+            <h2 className="detail-title">{item.title}</h2>
+          </div>
+          <div className="detail-score">
+            <span className="subtle">匹配度</span>
+            <strong>{item.fit_score.toFixed(2)}</strong>
+          </div>
+        </div>
+
+        <div className="meta">
+          <span>{`作者 ${item.author}`}</span>
+          <span>{`发布时间 ${formatRelativeDate(item.published_at)}`}</span>
+          <span>{`点赞 ${formatNumber(item.engagement.likes)}`}</span>
+          <span>{`收藏 ${formatNumber(item.engagement.favorites)}`}</span>
+        </div>
+
+        <div className="tag-row">
+          {collectDisplayTags(item).map((tag) => (
+            <span key={`detail-${item.id}-${tag}`} className={`tag ${getTagTone(tag)}`}>
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <div className="detail-summary">{item.summary}</div>
+        <div className="reason">{`适合原因：${item.fit_reason}`}</div>
+        <div className="risk">{`注意点：${(item.risk_notes || []).join("；") || "暂无明显风险提示"}`}</div>
+
+        <div className="detail-grid">
+          <div className="detail-metric">
+            <span className="subtle">入选原因</span>
+            <strong>{item.why_selected}</strong>
+          </div>
+          <div className="detail-metric">
+            <span className="subtle">当前反馈</span>
+            <strong>{feedbackAction ? `已标记：${feedbackAction}` : "尚未操作"}</strong>
+          </div>
+          <div className="detail-metric">
+            <span className="subtle">原始链接</span>
+            <strong className="detail-link-text">{item.source_url}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
-  const report = reportData;
+  const [reportMode, setReportMode] = useState("sample");
+  const report = reportMode === "sample" ? reportData : generatedReportData;
   const [feedbackEntries, setFeedbackEntries] = useState(() => loadFeedback());
+  const [view, setView] = useState("discover");
+  const [styleFilter, setStyleFilter] = useState("全部");
+  const [spaceFilter, setSpaceFilter] = useState("全部");
+  const [platformFilter, setPlatformFilter] = useState("全部");
+  const [selectedItemId, setSelectedItemId] = useState(null);
 
   const sortedItems = useMemo(
     () => [...report.items].sort((a, b) => a.display_priority - b.display_priority),
@@ -31,6 +134,52 @@ function App() {
     () => buildLatestActionMap(feedbackEntries),
     [feedbackEntries],
   );
+  const favoriteIds = useMemo(
+    () =>
+      Object.entries(latestActionMap)
+        .filter(([, action]) => action === "favorite")
+        .map(([itemId]) => itemId),
+    [latestActionMap],
+  );
+  const availableStyles = useMemo(
+    () => [...new Set(sortedItems.flatMap((item) => item.tags.style))],
+    [sortedItems],
+  );
+  const availableSpaces = useMemo(
+    () => [...new Set(sortedItems.flatMap((item) => item.tags.space))],
+    [sortedItems],
+  );
+  const availablePlatforms = useMemo(
+    () => [...new Set(sortedItems.map((item) => item.platform_label || item.platform))],
+    [sortedItems],
+  );
+  const filteredItems = useMemo(() => {
+    return sortedItems.filter((item) => {
+      const styleOk = styleFilter === "全部" || item.tags.style.includes(styleFilter);
+      const spaceOk = spaceFilter === "全部" || item.tags.space.includes(spaceFilter);
+      const platformOk =
+        platformFilter === "全部" ||
+        (item.platform_label || item.platform) === platformFilter;
+      const favoriteOk = view !== "favorites" || favoriteIds.includes(item.id);
+      return styleOk && spaceOk && platformOk && favoriteOk;
+    });
+  }, [sortedItems, styleFilter, spaceFilter, platformFilter, view, favoriteIds]);
+  const selectedItem = useMemo(
+    () => filteredItems.find((item) => item.id === selectedItemId) || sortedItems.find((item) => item.id === selectedItemId) || filteredItems[0] || sortedItems[0] || null,
+    [filteredItems, selectedItemId, sortedItems],
+  );
+
+  useEffect(() => {
+    if (!selectedItemId && sortedItems[0]) {
+      setSelectedItemId(sortedItems[0].id);
+    }
+  }, [selectedItemId, sortedItems]);
+
+  useEffect(() => {
+    if (selectedItem && !selectedItemId) {
+      setSelectedItemId(selectedItem.id);
+    }
+  }, [selectedItem, selectedItemId]);
 
   const handleAction = (item, index, action) => {
     const entry = buildFeedbackEntry(
@@ -48,6 +197,10 @@ function App() {
     }
   };
 
+  const handleSelectItem = (item) => {
+    setSelectedItemId(item.id);
+  };
+
   const handleExport = () => {
     exportFeedback(feedbackEntries);
   };
@@ -55,6 +208,12 @@ function App() {
   const handleClear = () => {
     clearFeedback();
     setFeedbackEntries([]);
+  };
+
+  const handleResetFilters = () => {
+    setStyleFilter("全部");
+    setSpaceFilter("全部");
+    setPlatformFilter("全部");
   };
 
   const heroTags = [
@@ -76,6 +235,22 @@ function App() {
             </div>
           </div>
           <div className="toolbar">
+            <div className="view-tabs">
+              <button
+                type="button"
+                className={`view-tab ${reportMode === "sample" ? "is-active" : ""}`}
+                onClick={() => setReportMode("sample")}
+              >
+                样例日报
+              </button>
+              <button
+                type="button"
+                className={`view-tab ${reportMode === "generated" ? "is-active" : ""}`}
+                onClick={() => setReportMode("generated")}
+              >
+                脚本日报
+              </button>
+            </div>
             <button type="button" className="btn-export" onClick={handleExport}>
               导出反馈 JSONL
             </button>
@@ -131,19 +306,88 @@ function App() {
         <section className="card section-gap">
           <SectionHeader
             title="今日推荐卡片"
-            description="推荐卡片现在由 React 组件渲染，后续可以很自然扩成详情页、收藏页和筛选器。"
-            pill={`${report.source_stats.recommended_items} 条精选 / 当前展示 ${sortedItems.length} 条`}
+            description="这一版补上了视图切换、筛选和详情区，已经开始接近真正的产品结构。"
+            pill={`${report.source_stats.recommended_items} 条精选 / 当前命中 ${filteredItems.length} 条`}
           />
-          <div className="feed-grid">
-            {sortedItems.map((item, index) => (
-              <FeedCard
-                key={item.id}
-                item={item}
-                index={index}
-                activeAction={latestActionMap[item.id]}
-                onAction={handleAction}
+
+          <div className="view-toolbar">
+            <div className="view-tabs">
+              <button
+                type="button"
+                className={`view-tab ${view === "discover" ? "is-active" : ""}`}
+                onClick={() => setView("discover")}
+              >
+                发现页
+              </button>
+              <button
+                type="button"
+                className={`view-tab ${view === "favorites" ? "is-active" : ""}`}
+                onClick={() => setView("favorites")}
+              >
+                收藏夹
+              </button>
+            </div>
+            <div className="subtle">{`当前收藏 ${favoriteIds.length} 条，当前筛中 ${filteredItems.length} 条`}</div>
+          </div>
+
+          <div className="workspace-grid">
+            <aside className="card workspace-sidebar">
+              <SectionHeader
+                title="筛选器"
+                description="先按风格、空间和来源缩小范围，再看详情区和卡片列表。"
               />
-            ))}
+              <FilterGroup
+                title="风格"
+                values={availableStyles}
+                selectedValue={styleFilter}
+                onSelect={setStyleFilter}
+              />
+              <FilterGroup
+                title="空间"
+                values={availableSpaces}
+                selectedValue={spaceFilter}
+                onSelect={setSpaceFilter}
+              />
+              <FilterGroup
+                title="来源"
+                values={availablePlatforms}
+                selectedValue={platformFilter}
+                onSelect={setPlatformFilter}
+              />
+              <div className="workspace-sidebar-actions">
+                <button type="button" className="btn-clear" onClick={handleResetFilters}>
+                  重置筛选
+                </button>
+              </div>
+            </aside>
+
+            <div className="workspace-main">
+              <DetailPanel
+                item={selectedItem}
+                feedbackAction={selectedItem ? latestActionMap[selectedItem.id] : ""}
+              />
+
+              {filteredItems.length ? (
+                <div className="feed-grid">
+                  {filteredItems.map((item, index) => (
+                    <FeedCard
+                      key={item.id}
+                      item={item}
+                      index={index}
+                      activeAction={latestActionMap[item.id]}
+                      onAction={handleAction}
+                      onSelect={handleSelectItem}
+                      selected={selectedItem?.id === item.id}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-state">
+                  <strong>当前没有匹配的案例</strong>
+                  <div className="subtle">可以切回“发现页”或重置筛选条件继续查看。</div>
+                </div>
+              )}
+            </div>
           </div>
         </section>
 

@@ -1,0 +1,185 @@
+{
+  "generated_at": "2026-04-30T18:40:00+08:00",
+  "profile_context": {
+    "house_area_net_sqm": 98,
+    "layout_preference": "3室",
+    "household": "四口常住，两个儿子，年龄差较大",
+    "residency_plan": "纯自住长期居住",
+    "cooking_frequency": "高频做饭",
+    "key_needs": [
+      "儿童房规划",
+      "客厅功能角",
+      "厨房与餐边柜",
+      "全屋收纳",
+      "低维护"
+    ]
+  },
+  "items": [
+    {
+      "id": "raw_xhs_001",
+      "platform": "xiaohongshu",
+      "platform_label": "小红书",
+      "title": "98平二孩家庭原木风三居，先做一睡一玩的儿童房",
+      "source_url": "https://example.com/xiaohongshu/post/20260430_001",
+      "cover_url": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "住进原木里",
+      "published_at": "2026-04-28T20:12:00+08:00",
+      "engagement": {
+        "likes": 3248,
+        "favorites": 2411,
+        "comments": 387
+      },
+      "content_text": "实景案例，房屋套内接近98平，二孩家庭。儿童房当前先一睡一玩，哥哥学习区单独安静，弟弟活动区更灵活。客厅边角做了书桌位，整墙柜补充玩具和书籍收纳，整体为原木现代简约。",
+      "media_type": "mixed",
+      "detected_keywords": [
+        "98平",
+        "二孩家庭",
+        "儿童房",
+        "一睡一玩",
+        "客厅书桌",
+        "整墙柜",
+        "原木"
+      ]
+    },
+    {
+      "id": "raw_hhz_002",
+      "platform": "haohaozhu",
+      "platform_label": "好好住",
+      "title": "高频做饭家庭的厨房+餐边柜整合思路",
+      "source_url": "https://example.com/haohaozhu/post/20260430_013",
+      "cover_url": "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "饭点实验室",
+      "published_at": "2026-04-25T18:40:00+08:00",
+      "engagement": {
+        "likes": 1127,
+        "favorites": 984,
+        "comments": 116
+      },
+      "content_text": "分享高频做饭家庭的厨房布局，重点是冰箱、蒸烤箱和台面动线，餐边柜同时承担电器收纳和备餐。整体偏现代简约，强调易清洁和长期自住。",
+      "media_type": "image",
+      "detected_keywords": [
+        "高频做饭",
+        "厨房",
+        "餐边柜",
+        "电器整合",
+        "易清洁",
+        "现代简约"
+      ]
+    },
+    {
+      "id": "raw_ydt_003",
+      "platform": "yidoutang",
+      "platform_label": "一兜糖",
+      "title": "二孩家庭先活动后分房的过渡型儿童区",
+      "source_url": "https://example.com/yidoutang/post/20260430_021",
+      "cover_url": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "糖系亲子屋",
+      "published_at": "2026-04-27T15:05:00+08:00",
+      "engagement": {
+        "likes": 892,
+        "favorites": 742,
+        "comments": 94
+      },
+      "content_text": "适合7岁哥哥和婴儿弟弟的阶段型儿童区，当前先保证睡眠和活动分区，后续随着年龄变化再拆分房间。整体风格温暖简约，维护负担较低。",
+      "media_type": "image",
+      "detected_keywords": [
+        "二孩家庭",
+        "儿童房",
+        "活动区",
+        "温暖简约",
+        "低维护"
+      ]
+    },
+    {
+      "id": "raw_pin_004",
+      "platform": "pinterest",
+      "platform_label": "Pinterest",
+      "title": "客厅边角工作台与整墙收纳一体灵感",
+      "source_url": "https://example.com/pinterest/pin/20260430_008",
+      "cover_url": "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "Daily Space Mood",
+      "published_at": "2026-04-29T11:10:00+08:00",
+      "engagement": {
+        "likes": 0,
+        "favorites": 0,
+        "comments": 0
+      },
+      "content_text": "更偏视觉灵感，展示客厅靠窗边角书桌、整墙书柜和低饱和原木色搭配。没有太多落地施工细节，但对客厅功能角很有启发。",
+      "media_type": "image",
+      "detected_keywords": [
+        "灵感图",
+        "客厅功能角",
+        "边角书桌",
+        "整墙收纳",
+        "原木"
+      ]
+    },
+    {
+      "id": "raw_hb_005",
+      "platform": "huaban",
+      "platform_label": "花瓣",
+      "title": "奶油风儿童房拼贴灵感合集",
+      "source_url": "https://example.com/huaban/pin/20260430_006",
+      "cover_url": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "Mood Collector",
+      "published_at": "2026-04-29T08:45:00+08:00",
+      "engagement": {
+        "likes": 0,
+        "favorites": 0,
+        "comments": 0
+      },
+      "content_text": "偏奶油风的儿童房拼贴图，氛围柔和但开放格和浅色软装较多，适合扩展审美，不一定适合作为长期自住家庭的直接照搬模板。",
+      "media_type": "image",
+      "detected_keywords": [
+        "奶油风",
+        "儿童房",
+        "拼贴灵感",
+        "开放格",
+        "高维护"
+      ]
+    },
+    {
+      "id": "raw_houzz_006",
+      "platform": "houzz",
+      "platform_label": "Houzz",
+      "title": "原木+白色厨房餐边柜一体案例",
+      "source_url": "https://example.com/houzz/project/20260430_006",
+      "cover_url": "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "North Home Studio",
+      "published_at": "2026-04-24T09:20:00+08:00",
+      "engagement": {
+        "likes": 0,
+        "favorites": 0,
+        "comments": 0
+      },
+      "content_text": "海外项目，但厨房与餐边柜一体化处理优秀，备餐、储物和展示比例平衡，强调低维护和家庭长期使用。需要结合国内户型和尺寸二次判断。",
+      "media_type": "image",
+      "detected_keywords": [
+        "海外案例",
+        "厨房",
+        "餐边柜",
+        "原木",
+        "低维护"
+      ]
+    }
+  ]
+}

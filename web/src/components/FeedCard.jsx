@@ -8,6 +8,7 @@ import {
 
 function ActionButton({ action, active, onClick }) {
   const labelMap = {
+    detail: "查看详情",
     like: "喜欢",
     favorite: "收藏",
     dislike: "不喜欢",
@@ -15,6 +16,7 @@ function ActionButton({ action, active, onClick }) {
   };
 
   const classMap = {
+    detail: "btn-source",
     like: "btn-like",
     favorite: "btn-save",
     dislike: "btn-dislike",
@@ -32,7 +34,7 @@ function ActionButton({ action, active, onClick }) {
   );
 }
 
-function FeedCard({ item, index, activeAction, onAction }) {
+function FeedCard({ item, index, activeAction, onAction, onSelect, selected }) {
   const tags = collectDisplayTags(item);
   const gradient = gradients[index % gradients.length];
   const sourceLabel = item.platform_label || item.platform;
@@ -43,7 +45,7 @@ function FeedCard({ item, index, activeAction, onAction }) {
   ];
 
   return (
-    <article className="feed-card">
+    <article className={`feed-card ${selected ? "feed-card-selected" : ""}`}>
       <div
         className="feed-cover"
         style={{
@@ -59,7 +61,9 @@ function FeedCard({ item, index, activeAction, onAction }) {
       </div>
 
       <div className="feed-body">
-        <h3 className="feed-title">{item.title}</h3>
+        <button type="button" className="feed-title-button" onClick={() => onSelect(item)}>
+          <h3 className="feed-title">{item.title}</h3>
+        </button>
         <div className="meta">
           {meta.map((line) => (
             <span key={line}>{line}</span>
@@ -80,6 +84,11 @@ function FeedCard({ item, index, activeAction, onAction }) {
         <div className="subtle">{`入选原因：${item.why_selected}`}</div>
 
         <div className="actions">
+          <ActionButton
+            action="detail"
+            active={false}
+            onClick={() => onSelect(item)}
+          />
           <ActionButton
             action="like"
             active={activeAction === "like"}

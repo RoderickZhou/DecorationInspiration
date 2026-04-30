@@ -1,0 +1,240 @@
+{
+  "report_date": "2026-05-01",
+  "generated_at": "2026-05-01T02:25:22+08:00",
+  "report_id": "daily_report_2026_05_01",
+  "user_profile_version": "v1",
+  "user_profile_snapshot": {
+    "house_area_net_sqm": 98,
+    "layout_preference": "3室",
+    "residency_plan": "纯自住长期居住",
+    "cooking_frequency": "高频做饭",
+    "key_needs": [
+      "儿童房规划",
+      "客厅功能角",
+      "厨房与餐边柜",
+      "全屋收纳",
+      "低维护"
+    ]
+  },
+  "source_stats": {
+    "raw_items": 6,
+    "deduplicated_items": 6,
+    "filtered_items": 3,
+    "recommended_items": 3,
+    "source_breakdown": [
+      {
+        "platform": "haohaozhu",
+        "raw_items": 1,
+        "recommended_items": 1
+      },
+      {
+        "platform": "houzz",
+        "raw_items": 1,
+        "recommended_items": 0
+      },
+      {
+        "platform": "huaban",
+        "raw_items": 1,
+        "recommended_items": 0
+      },
+      {
+        "platform": "pinterest",
+        "raw_items": 1,
+        "recommended_items": 0
+      },
+      {
+        "platform": "xiaohongshu",
+        "raw_items": 1,
+        "recommended_items": 1
+      },
+      {
+        "platform": "yidoutang",
+        "raw_items": 1,
+        "recommended_items": 1
+      }
+    ]
+  },
+  "today_focus": [
+    "儿童房规划",
+    "客厅功能角",
+    "厨房与餐边柜"
+  ],
+  "summary": {
+    "headline": "当前更值得优先关注实景、长期自住、低维护且贴近二孩家庭的案例。",
+    "highlights": [
+      "儿童房、客厅功能角和厨房餐边柜仍然是最值得持续观察的三大主题。",
+      "高分案例普遍同时命中家庭结构、收纳和低维护三个条件。",
+      "灵感图适合拓宽方向，但仍需用真实案例做最后判断。"
+    ],
+    "question_of_the_day": "你更想先判断儿童房阶段方案，还是先把客厅功能角的形态想清楚？",
+    "fit_direction": [
+      "优先看真实落地案例，不让纯视觉图主导判断。",
+      "继续偏向原木、温暖简约和低维护方向。",
+      "将收藏行为反馈回模型后，再逐步做更强的个性化推荐。"
+    ]
+  },
+  "daily_digest": {
+    "estimated_read_minutes": 3,
+    "recommended_browse_order": [
+      "儿童房规划",
+      "客厅功能角",
+      "厨房与餐边柜",
+      "风格拓展"
+    ],
+    "top_tags": [
+      "原木",
+      "简约",
+      "儿童房",
+      "收纳强",
+      "长期自住"
+    ]
+  },
+  "feedback_summary": {
+    "recent_positive_patterns": [
+      "二孩家庭",
+      "原木",
+      "客厅功能角",
+      "厨房餐边柜"
+    ]
+  },
+  "items": [
+    {
+      "id": "raw_xhs_001",
+      "platform": "xiaohongshu",
+      "platform_label": "小红书",
+      "title": "98平二孩家庭原木风三居，先做一睡一玩的儿童房",
+      "source_url": "https://example.com/xiaohongshu/post/20260430_001",
+      "cover_url": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "住进原木里",
+      "published_at": "2026-04-28T20:12:00+08:00",
+      "engagement": {
+        "likes": 3248,
+        "favorites": 2411,
+        "comments": 387
+      },
+      "tags": {
+        "style": [
+          "原木",
+          "现代简约",
+          "简约"
+        ],
+        "space": [
+          "儿童房",
+          "客厅"
+        ],
+        "family": [
+          "二孩家庭",
+          "学龄儿童",
+          "三居"
+        ],
+        "features": [
+          "客厅功能角",
+          "收纳强",
+          "儿童活动区",
+          "整墙收纳"
+        ]
+      },
+      "summary": "适合家庭画像接近的长期自住案例，重点解决儿童房阶段规划，对客厅功能角有直接参考。",
+      "fit_score": 0.89,
+      "fit_reason": "直接命中二孩家庭、覆盖儿童房主题、包含客厅功能角，因此推荐进入日报。",
+      "risk_notes": [
+        "暂无明显风险提示"
+      ],
+      "why_selected": "直接命中二孩家庭；覆盖儿童房主题；包含客厅功能角",
+      "display_priority": 1
+    },
+    {
+      "id": "raw_ydt_003",
+      "platform": "yidoutang",
+      "platform_label": "一兜糖",
+      "title": "二孩家庭先活动后分房的过渡型儿童区",
+      "source_url": "https://example.com/yidoutang/post/20260430_021",
+      "cover_url": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "糖系亲子屋",
+      "published_at": "2026-04-27T15:05:00+08:00",
+      "engagement": {
+        "likes": 892,
+        "favorites": 742,
+        "comments": 94
+      },
+      "tags": {
+        "style": [
+          "温暖简约",
+          "简约"
+        ],
+        "space": [
+          "儿童房"
+        ],
+        "family": [
+          "二孩家庭",
+          "有婴儿",
+          "学龄儿童"
+        ],
+        "features": [
+          "低维护",
+          "儿童活动区",
+          "可成长空间"
+        ]
+      },
+      "summary": "适合家庭画像接近的长期自住案例，重点解决儿童房阶段规划。",
+      "fit_score": 0.84,
+      "fit_reason": "直接命中二孩家庭、覆盖儿童房主题、维护成本可控，因此推荐进入日报。",
+      "risk_notes": [
+        "暂无明显风险提示"
+      ],
+      "why_selected": "直接命中二孩家庭；覆盖儿童房主题；维护成本可控",
+      "display_priority": 2
+    },
+    {
+      "id": "raw_hhz_002",
+      "platform": "haohaozhu",
+      "platform_label": "好好住",
+      "title": "高频做饭家庭的厨房+餐边柜整合思路",
+      "source_url": "https://example.com/haohaozhu/post/20260430_013",
+      "cover_url": "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "饭点实验室",
+      "published_at": "2026-04-25T18:40:00+08:00",
+      "engagement": {
+        "likes": 1127,
+        "favorites": 984,
+        "comments": 116
+      },
+      "tags": {
+        "style": [
+          "现代简约",
+          "简约"
+        ],
+        "space": [
+          "厨房",
+          "餐边柜"
+        ],
+        "family": [
+          "长期自住"
+        ],
+        "features": [
+          "收纳强",
+          "低维护",
+          "高频做饭友好"
+        ]
+      },
+      "summary": "适合家庭画像接近的长期自住案例，厨房与餐边柜思路较实用。",
+      "fit_score": 0.75,
+      "fit_reason": "贴近高频做饭需求、偏长期自住、维护成本可控，因此推荐进入日报。",
+      "risk_notes": [
+        "暂无明显风险提示"
+      ],
+      "why_selected": "贴近高频做饭需求；偏长期自住；维护成本可控",
+      "display_priority": 3
+    }
+  ]
+}

@@ -36,9 +36,13 @@
 - GitHub 仓库：`https://github.com/RoderickZhou/DecorationInspiration`
 - 当前本地目录：`C:\Users\Administrator\Documents\DecorationInspiration`
 - 已成功推送到远程 `main`
-- 最近一次已知成功提交：
-  - `ccc8957`
-  - commit message: `Add renovation inspiration demos, PRD, and sample data`
+- 当前仓库已继续推进，新增了：
+  - `web/` React 前端工程
+  - `scripts/generate_report.py`
+  - `docs/minimax-spec.md`
+  - `prompts/`
+  - `data-samples/raw-candidates.json`
+  - `data-samples/generated-report.json`
 
 如果在另一台电脑继续工作，建议直接克隆仓库：
 
@@ -59,9 +63,21 @@ DecorationInspiration/
     renovation-planner-demo.html
   docs/
     renovation-daily-prd.md
+    minimax-spec.md
+    hand-off.md
   data-samples/
+    raw-candidates.json
+    generated-report.json
     sample-report.json
     sample-actions.jsonl
+  prompts/
+    item-structuring.md
+    daily-digest.md
+  scripts/
+    generate_report.py
+  web/
+    src/
+    package.json
 ```
 
 ---
@@ -110,7 +126,23 @@ DecorationInspiration/
     - 数据结构
     - 技术方案建议
 
+- `docs/minimax-spec.md`
+  - Minimax 结构化整理入口规范
+  - 定义：
+    - 原始候选内容输入结构
+    - 单条结构化输出格式
+    - 日报级汇总输出格式
+    - 标签体系和字段约束
+
 ### data-samples
+
+- `data-samples/raw-candidates.json`
+  - 更接近真实采集器的原始候选内容样例
+  - 代表未来采集器、Hermes 或其他入口进入系统前的统一交换格式
+
+- `data-samples/generated-report.json`
+  - 由 `scripts/generate_report.py` 自动从原始候选样例生成
+  - 证明“raw candidates -> report.json”的链路已经有脚本骨架
 
 - `data-samples/sample-report.json`
   - 可直接喂给前端渲染的日报样例数据
@@ -130,6 +162,33 @@ DecorationInspiration/
     - dislike
     - skip
     - open_source
+
+### prompts
+
+- `prompts/item-structuring.md`
+  - Minimax 单条候选内容结构化 prompt
+
+- `prompts/daily-digest.md`
+  - Minimax 日报摘要汇总 prompt
+
+### scripts
+
+- `scripts/generate_report.py`
+  - 当前第一版日报生成脚本骨架
+  - 负责把原始候选内容转换为前端可消费的日报 JSON
+  - 当前还是规则型骨架，后续应接入 Minimax API
+
+### web
+
+- `web/`
+  - React + Vite 前端工程
+  - 已不再只是单个 HTML
+  - 当前支持：
+    - 发现页
+    - 收藏夹视图
+    - 筛选器
+    - 案例详情区
+    - 本地反馈记录与导出
 
 ---
 
@@ -185,6 +244,9 @@ PRD 已明确：
 - Demo
 - 样例数据
 - README
+- React 前端工程
+- 日报生成脚本骨架
+- Minimax 规范和 prompt
 
 ---
 
@@ -309,18 +371,23 @@ http://localhost:8123/demo/renovation-daily-demo.html
 - 数据结构
 - 页面原型
 - 样例数据
+- 规则型日报生成脚本
 
-### 9.2 还没有 Minimax 输入输出规范文件
+### 9.2 还没有真正的 Minimax API 接入
 
-虽然职责已经定义清楚，但仓库里还没有专门的：
+虽然规范和 prompt 已经补齐，但目前还没有：
 
-- prompt 文件
-- 输入输出 schema 文档
-- 调用脚本
+- 真正的 Minimax API 调用代码
+- 模型结果缓存
+- 调用失败重试与降级逻辑
 
-### 9.3 还没有日报生成脚本
+### 9.3 日报生成脚本还是骨架
 
-当前 `sample-report.json` 是人工生成的样例，不是脚本自动产出。
+当前已经有：
+
+- `raw-candidates.json -> generated-report.json`
+
+但它仍然是规则型骨架，目的是先把接口和字段跑顺，不代表最终推荐质量。
 
 ### 9.4 `reply-to-hermes.md` 没进仓库
 
@@ -334,49 +401,25 @@ http://localhost:8123/demo/renovation-daily-demo.html
 
 如果在另一台电脑继续，最建议按以下顺序推进。
 
-### 第一步：搭第一版项目骨架
+### 第一步：接 Minimax API 到脚本链路
 
-建议新增：
+- 脚本、prompt 和规范都已经准备好
+- 下一步应该把 `scripts/generate_report.py` 的规则型逻辑替换成真实 Minimax 调用
 
-```text
-scripts/
-prompts/
-src/ 或 web/
-```
+### 第二步：接真实采集器
 
-其中：
+- 目标是把多来源采集结果稳定写成 `raw-candidates.json` 结构
+- 无论来源是脚本、Hermes 还是别的采集服务，都应该接这一层
 
-- `scripts/`
-  - 放数据转换、日报生成、导入导出脚本
-- `prompts/`
-  - 放 Minimax 的摘要、标签、适配度判断 prompt
-- `web/` 或前端目录
-  - 放真正前端工程，而不是单个 HTML 文件
+### 第三步：把前端改成读取生成结果
 
-### 第二步：补 Minimax 处理入口规范
+- 当前 React 前端仍然读取 `sample-report.json`
+- 下一步应切换为读取 `generated-report.json` 或接口返回值
 
-建议新增一份明确文档：
+### 第四步：补反馈学习
 
-- 输入原始候选内容长什么样
-- Minimax 输出结构化条目长什么样
-- 每个字段的含义是什么
-
-### 第三步：做日报生成脚本
-
-先不接真实爬虫，也可以先做：
-
-- `raw candidates -> normalized items -> report.json`
-
-只要日报生成脚本跑通，后面换任何采集器都能接进来。
-
-### 第四步：将前端 Demo 工程化
-
-从静态 HTML 迁移到真正前端工程，例如：
-
-- `React`
-- `Next.js`
-
-但这是在脚本链路开始稳定之后再做。
+- 把前端导出的反馈 JSONL 纳入排序逻辑
+- 让第二天的日报真的根据收藏和不喜欢结果调整
 
 ---
 
@@ -395,16 +438,23 @@ src/ 或 web/
 4. 数据结构样例：
    - `data-samples/sample-report.json`
    - `data-samples/sample-actions.jsonl`
-5. 页面原型：
+5. 页面原型和工程版前端：
    - `demo/renovation-daily-demo.html`
    - `demo/renovation-planner-demo.html`
+   - `web/`
+6. 新的数据链路文件：
+   - `data-samples/raw-candidates.json`
+   - `data-samples/generated-report.json`
+   - `docs/minimax-spec.md`
+   - `prompts/`
+   - `scripts/generate_report.py`
 
 ### AI 接手时建议说明
 
 可以把下面这段话原样给新的 AI：
 
 ```text
-请先阅读桌面的《装修项目交接说明.md》，再阅读仓库 README、PRD、sample-report.json、sample-actions.jsonl 和两个 demo 页面。这个项目当前目标是做“装修灵感日报”，主链路是 自动采集 -> Minimax 结构化整理 -> report.json -> 前端日报页 -> 用户反馈。当前最推荐的下一步是：搭第一版项目骨架、补 Minimax 输入输出规范、做日报生成脚本。请在不推翻现有产品方向和数据结构的前提下继续推进。
+请先阅读 docs/hand-off.md，再阅读仓库 README、PRD、minimax-spec、raw-candidates.json、generated-report.json、sample-report.json、sample-actions.jsonl 和 web 前端工程。这个项目当前目标是做“装修灵感日报”，主链路是 自动采集 -> Minimax 结构化整理 -> report.json -> 前端日报页 -> 用户反馈。当前已经完成前端工程化、规则型日报生成脚本和 Minimax 规范，下一步最推荐的是：接 Minimax API、接真实采集器、把前端切到 generated-report.json 或接口读取。请在不推翻现有产品方向和数据结构的前提下继续推进。
 ```
 
 ---
@@ -440,11 +490,15 @@ src/ 或 web/
 - 两个 Demo
 - 可直接供前端使用的样例数据
 - 初步反馈回流模拟
+- React 工程版前端
+- 原始候选内容样例
+- 日报生成脚本骨架
+- Minimax 规范和 prompt
 
 当前最值得继续做的是：
 
-**把“样例驱动的原型”推进成“可运行的数据处理工程”。**
+**把“规则型可运行骨架”推进成“接入真实采集和真实模型的系统”。**
 
 最优先顺序仍然是：
 
-`项目骨架 -> Minimax 规范 -> 日报生成脚本 -> 真实采集器`
+`接 Minimax API -> 接真实采集器 -> 前端切换真实生成数据 -> 反馈学习`
