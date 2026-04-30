@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/decoration-inspiration/schemas/minimax_item_structuring.schema.json",
+  "title": "MinimaxItemStructuringIO",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task", "user_profile_snapshot", "candidate"],
+  "properties": {
+    "schema_version": { "type": "string", "enum": ["v1"] },
+    "task": { "type": "string", "enum": ["item_structuring"] },
+    "user_profile_snapshot": { "type": "object" },
+    "candidate": { "$ref": "./candidate.schema.json" },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "tags", "fit_score", "fit_reason", "risk_notes", "why_selected"],
+      "properties": {
+        "summary": { "type": "string", "minLength": 1 },
+        "tags": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["style", "space", "family", "features"],
+          "properties": {
+            "style": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "space": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "family": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "features": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "fit_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "fit_reason": { "type": "string", "minLength": 1 },
+        "risk_notes": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "why_selected": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}
+

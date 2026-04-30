@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/decoration-inspiration/schemas/report.schema.json",
+  "title": "DailyReport",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["report_date", "generated_at", "report_id", "user_profile_version", "user_profile_snapshot", "source_stats", "items"],
+  "properties": {
+    "report_date": { "type": "string", "minLength": 1 },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "report_id": { "type": "string", "minLength": 1 },
+    "user_profile_version": { "type": "string", "minLength": 1 },
+    "user_profile_snapshot": { "type": "object" },
+    "source_stats": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["raw_items", "deduplicated_items", "filtered_items", "recommended_items"],
+      "properties": {
+        "raw_items": { "type": "integer", "minimum": 0 },
+        "deduplicated_items": { "type": "integer", "minimum": 0 },
+        "filtered_items": { "type": "integer", "minimum": 0 },
+        "recommended_items": { "type": "integer", "minimum": 0 },
+        "source_breakdown": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": ["platform", "raw_items", "recommended_items"],
+            "properties": {
+              "platform": { "type": "string", "minLength": 1 },
+              "raw_items": { "type": "integer", "minimum": 0 },
+              "recommended_items": { "type": "integer", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "today_focus": { "type": "array", "items": { "type": "string" } },
+    "summary": { "type": "object" },
+    "daily_digest": { "type": "object" },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["id", "platform", "title", "source_url", "cover_url", "tags", "summary", "fit_score", "fit_reason", "risk_notes", "why_selected", "display_priority"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "platform": { "type": "string", "minLength": 1 },
+          "platform_label": { "type": "string" },
+          "title": { "type": "string", "minLength": 1 },
+          "source_url": { "type": "string", "minLength": 1 },
+          "cover_url": { "type": "string", "minLength": 1 },
+          "image_urls": { "type": "array", "items": { "type": "string" } },
+          "author": { "type": "string" },
+          "published_at": { "type": "string" },
+          "engagement": { "type": "object" },
+          "tags": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["style", "space", "family", "features"],
+            "properties": {
+              "style": { "type": "array", "items": { "type": "string" } },
+              "space": { "type": "array", "items": { "type": "string" } },
+              "family": { "type": "array", "items": { "type": "string" } },
+              "features": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "summary": { "type": "string", "minLength": 1 },
+          "fit_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "fit_reason": { "type": "string", "minLength": 1 },
+          "risk_notes": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+          "why_selected": { "type": "string", "minLength": 1 },
+          "display_priority": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "feedback_summary": { "type": "object" }
+  }
+}
+

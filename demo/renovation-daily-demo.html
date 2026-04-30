@@ -434,7 +434,7 @@
 </head>
 <body>
   <div class="container">
-    <div id="loading" class="loading">正在读取 `sample-report.json`，准备渲染今日日报...</div>
+    <div id="loading" class="loading">正在读取日报数据，准备渲染今日日报...</div>
     <div id="error-box" class="error-box" hidden></div>
 
     <div id="app" hidden>
@@ -524,6 +524,7 @@
 
   <script>
     const STORAGE_KEY = "renovation_daily_feedback_v1";
+    const DEFAULT_DATA_URL = "../data-samples/sample-report.json";
     const gradients = [
       "linear-gradient(180deg, rgba(191,219,254,0.18), rgba(96,165,250,0.34))",
       "linear-gradient(180deg, rgba(254,215,170,0.18), rgba(251,146,60,0.3))",
@@ -835,7 +836,11 @@
 
     async function init() {
       try {
-        const response = await fetch("./sample-report.json", { cache: "no-store" });
+        const params = new URLSearchParams(window.location.search);
+        const dataUrl = params.get("data") || DEFAULT_DATA_URL;
+        document.getElementById("loading").textContent = `正在读取日报数据：${dataUrl}`;
+
+        const response = await fetch(dataUrl, { cache: "no-store" });
         if (!response.ok) {
           throw new Error(`读取日报数据失败，状态码 ${response.status}`);
         }
@@ -863,7 +868,7 @@
       } catch (error) {
         const errorBox = document.getElementById("error-box");
         errorBox.hidden = false;
-        errorBox.textContent = `${error.message}。请通过本地静态服务打开页面，并确认 sample-report.json 与 HTML 在同一目录。`;
+        errorBox.textContent = `${error.message}。请通过本地静态服务打开页面，并确认日报数据路径可被访问（默认：${DEFAULT_DATA_URL}；也可通过 ?data=... 指定）。`;
         document.getElementById("loading").hidden = true;
       }
     }

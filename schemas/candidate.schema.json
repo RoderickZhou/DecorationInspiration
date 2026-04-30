@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/decoration-inspiration/schemas/candidate.schema.json",
+  "title": "CandidateItem",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["platform", "title", "source_url", "cover_url"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "platform": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "source_url": { "type": "string", "minLength": 1 },
+    "cover_url": { "type": "string", "minLength": 1 },
+    "image_urls": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "author": { "type": "string" },
+    "published_at": { "type": "string", "minLength": 1 },
+    "engagement": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "likes": { "type": "integer", "minimum": 0 },
+        "favorites": { "type": "integer", "minimum": 0 },
+        "comments": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "text": { "type": "string" }
+  }
+}
+

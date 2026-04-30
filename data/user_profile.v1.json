@@ -1,0 +1,32 @@
+{
+  "user_profile_version": "v1",
+  "user_profile_snapshot": {
+    "house_area_gross_sqm": 132,
+    "house_area_net_sqm": 98,
+    "layout_preference": "3室",
+    "household": {
+      "adults": 2,
+      "children": [
+        {
+          "role": "elder_son",
+          "age": 7
+        },
+        {
+          "role": "younger_son",
+          "age_months": 8
+        }
+      ]
+    },
+    "residency_plan": "纯自住长期居住",
+    "cooking_frequency": "高频做饭",
+    "key_needs": [
+      "儿童房规划",
+      "客厅功能角",
+      "厨房与餐边柜",
+      "全屋收纳",
+      "低维护",
+      "长期耐住"
+    ]
+  }
+}
+

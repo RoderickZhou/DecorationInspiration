@@ -56,18 +56,40 @@ git clone https://github.com/RoderickZhou/DecorationInspiration.git
 
 ```text
 DecorationInspiration/
+  data/
+    user_profile.v1.json
+    raw/
+    normalized/
+    reports/
+  scripts/
+    convert_raw_to_candidates.py
+    generate_daily_report.py
+  prompts/
+    minimax_item_structuring.md
+    minimax_daily_summary.md
   .gitignore
   README.md
   demo/
     renovation-daily-demo.html
     renovation-planner-demo.html
   docs/
+    minimax-io.md
     renovation-daily-prd.md
     minimax-spec.md
     hand-off.md
+    pipeline.md
+    qa.md
+  schemas/
+    raw_collector_item.schema.json
+    candidate.schema.json
+    minimax_item_structuring.schema.json
+    minimax_daily_summary.schema.json
+    report.schema.json
   data-samples/
     raw-candidates.json
     generated-report.json
+    sample-raw-items.jsonl
+    sample-candidates.jsonl
     sample-report.json
     sample-actions.jsonl
   prompts/
@@ -102,7 +124,8 @@ DecorationInspiration/
 - `demo/renovation-daily-demo.html`
   - 当前最重要的页面
   - 已改造成**数据驱动版 Demo**
-  - 会读取 `sample-report.json` 动态渲染日报
+  - 默认读取 `data-samples/sample-report.json` 动态渲染日报
+  - 支持通过 `?data=...` 指定任意日报 JSON 路径
   - 支持用户点击：
     - 喜欢
     - 收藏
@@ -133,6 +156,51 @@ DecorationInspiration/
     - 单条结构化输出格式
     - 日报级汇总输出格式
     - 标签体系和字段约束
+- `docs/pipeline.md`
+  - 第一版“候选内容 -> 日报 JSON -> Demo 预览”的数据处理管线说明
+
+- `docs/minimax-io.md`
+  - Minimax 输入输出规范（v1），用于后续接入“结构化整理”和“日报汇总”
+
+- `docs/qa.md`
+  - 自检与协作手册：端到端跑通、基础校验、Minimax 输入生成、actions 合并
+
+### scripts
+
+- `scripts/generate_daily_report.py`
+  - 从 candidates JSONL 生成 `report.json`
+  - 当前用规则/占位逻辑模拟 Minimax 输出，便于先把管线跑通
+
+- `scripts/convert_raw_to_candidates.py`
+  - raw collector JSONL -> candidates JSONL
+
+- `scripts/prepare_minimax_item_inputs.py`
+  - candidates JSONL -> item_structuring 批量输入（JSONL）
+
+- `scripts/prepare_minimax_daily_summary_input.py`
+  - report.json -> daily_summary 单次输入（JSON）
+
+- `scripts/validate_candidates.py`
+  - candidates JSONL 的基础校验（无依赖）
+
+- `scripts/validate_report_basic.py`
+  - report.json 的基础校验（无依赖）
+
+- `scripts/merge_actions_jsonl.py`
+  - 合并/去重/排序多份 actions.jsonl（多电脑协作）
+
+- `scripts/run_item_structuring.py`
+  - item_structuring 的占位运行器（heuristic；后续替换为 Minimax 实际调用）
+
+- `scripts/run_daily_summary.py`
+  - daily_summary 的占位运行器（heuristic；后续替换为 Minimax 实际调用）
+
+### prompts
+
+- `prompts/minimax_item_structuring.md`
+  - 单条内容的结构化整理提示词草案
+- `prompts/minimax_daily_summary.md`
+  - 当日报告汇总提示词草案
 
 ### data-samples
 
@@ -189,6 +257,16 @@ DecorationInspiration/
     - 筛选器
     - 案例详情区
     - 本地反馈记录与导出
+- `data-samples/sample-candidates.jsonl`
+  - 采集器输出的候选内容样例（用于验证去重、筛选与日报生成）
+
+- `data-samples/sample-raw-items.jsonl`
+  - 原始采集输出样例（raw collector JSONL）
+
+### schemas
+
+- `schemas/report.schema.json`
+  - report.json 的 schema，便于前端工程化与跨机器协作
 
 ---
 

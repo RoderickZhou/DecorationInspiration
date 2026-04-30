@@ -13,4 +13,11 @@ build/
 *.tmp
 *.bak
 
+__pycache__/
+*.pyc
+
+data/raw/
+data/normalized/
+data/reports/
+
 local-actions-export.jsonl
