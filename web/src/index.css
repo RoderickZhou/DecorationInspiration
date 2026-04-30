@@ -1,0 +1,76 @@
+:root {
+  --bg: #f3f5f9;
+  --panel: #ffffff;
+  --panel-soft: #f8fafc;
+  --text: #111827;
+  --muted: #667085;
+  --line: #e5e7eb;
+  --primary: #2563eb;
+  --primary-soft: #dbeafe;
+  --good: #15803d;
+  --good-soft: #dcfce7;
+  --warn: #b45309;
+  --warn-soft: #fef3c7;
+  --bad: #b91c1c;
+  --bad-soft: #fee2e2;
+  --shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+  --radius: 18px;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--text);
+  background: linear-gradient(180deg, #edf3ff 0, var(--bg) 220px);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 34px;
+  line-height: 1.12;
+  margin: 16px 0 12px;
+}
+
+h2 {
+  font-size: 22px;
+  margin-bottom: 14px;
+}
+
+h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+a {
+  color: inherit;
+}
+
+@media (max-width: 680px) {
+  h1 {
+    font-size: 28px;
+  }
+}
