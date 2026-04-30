@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>装修灵感日报 Demo</title>
+  <style>
+    :root {
+      --bg: #f3f5f9;
+      --panel: #ffffff;
+      --panel-soft: #f8fafc;
+      --text: #111827;
+      --muted: #667085;
+      --line: #e5e7eb;
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --good: #15803d;
+      --good-soft: #dcfce7;
+      --warn: #b45309;
+      --warn-soft: #fef3c7;
+      --bad: #b91c1c;
+      --bad-soft: #fee2e2;
+      --shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, #edf3ff 0, var(--bg) 220px);
+      color: var(--text);
+    }
+
+    .container {
+      width: min(1240px, calc(100vw - 28px));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    .hero,
+    .quick-stats,
+    .insight-grid,
+    .feed-grid,
+    .two-col,
+    .summary-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero {
+      grid-template-columns: 1.25fr 0.9fr;
+      margin-bottom: 18px;
+    }
+
+    .quick-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-content: start;
+    }
+
+    .insight-grid,
+    .summary-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .feed-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .two-col {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .hero-main {
+      color: #fff;
+      background: linear-gradient(140deg, #1d4ed8, #3b82f6 55%, #60a5fa);
+      min-height: 240px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .eyebrow,
+    .pill,
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      width: fit-content;
+    }
+
+    .eyebrow {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .pill {
+      background: var(--panel-soft);
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+
+    .status-pill {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 34px;
+      line-height: 1.12;
+      margin: 16px 0 12px;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .hero-main p {
+      color: rgba(255, 255, 255, 0.92);
+      line-height: 1.65;
+    }
+
+    .subtle {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .stat,
+    .insight,
+    .panel-item,
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel-soft);
+      padding: 16px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      margin: 6px 0 8px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+      max-width: 720px;
+    }
+
+    .insight strong,
+    .panel-item strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .feed-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .feed-cover {
+      height: 230px;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+      color: #fff;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .feed-cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.04), rgba(15, 23, 42, 0.66));
+    }
+
+    .cover-meta,
+    .cover-badges {
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-badges,
+    .tag-row,
+    .actions,
+    .hero-tags,
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge,
+    .tag {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .tag {
+      background: var(--primary-soft);
+      color: #1d4ed8;
+    }
+
+    .tag.good {
+      background: var(--good-soft);
+      color: var(--good);
+    }
+
+    .tag.warn {
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+
+    .tag.bad {
+      background: var(--bad-soft);
+      color: var(--bad);
+    }
+
+    .feed-body {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .feed-title {
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .reason,
+    .risk {
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .reason {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+    }
+
+    .risk {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 14px;
+      transition: 0.18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-like {
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .btn-dislike {
+      background: #fff1f2;
+      color: #be123c;
+    }
+
+    .btn-save {
+      background: #ecfdf3;
+      color: #166534;
+    }
+
+    .btn-source,
+    .btn-export,
+    .btn-clear {
+      background: #f8fafc;
+      color: #334155;
+      border: 1px solid var(--line);
+    }
+
+    .button-active {
+      outline: 2px solid rgba(37, 99, 235, 0.18);
+    }
+
+    .panel-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .summary-card.highlight {
+      background: linear-gradient(180deg, #eff6ff, #ffffff);
+      border-color: #bfdbfe;
+    }
+
+    .toolbar {
+      margin-top: 14px;
+    }
+
+    .feedback-banner,
+    .loading,
+    .error-box {
+      margin-bottom: 18px;
+      border-radius: 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .feedback-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .loading {
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .error-box {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .empty {
+      padding: 22px;
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .footer {
+      margin-top: 22px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 1080px) {
+      .hero,
+      .feed-grid,
+      .insight-grid,
+      .two-col,
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .container {
+        width: min(100vw - 18px, 1240px);
+      }
+
+      .quick-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .feedback-banner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="loading" class="loading">正在读取 `sample-report.json`，准备渲染今日日报...</div>
+    <div id="error-box" class="error-box" hidden></div>
+
+    <div id="app" hidden>
+      <div class="feedback-banner">
+        <div>
+          <strong id="feedback-title">反馈记录已开启</strong>
+          <div id="feedback-subtitle" class="subtle">当前页面会把你的点击动作暂存在浏览器本地，方便模拟后续回流学习。</div>
+        </div>
+        <div class="toolbar">
+          <button id="export-actions" class="btn-export">导出反馈 JSONL</button>
+          <button id="clear-actions" class="btn-clear">清空本地反馈</button>
+        </div>
+      </div>
+
+      <section class="hero">
+        <div class="card hero-main">
+          <div>
+            <div class="eyebrow">装修灵感日报 / Dynamic Demo</div>
+            <h1 id="hero-title"></h1>
+            <p id="hero-description"></p>
+          </div>
+          <div id="hero-tags" class="hero-tags"></div>
+        </div>
+
+        <div id="quick-stats" class="quick-stats"></div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <div>
+            <h2>今天值得先看的重点</h2>
+            <p>这一栏直接来自日报摘要与主题结果，让你先抓住当天最值得判断的方向。</p>
+          </div>
+          <div class="pill">Minimax 自动摘要 + 数据驱动渲染</div>
+        </div>
+        <div id="insight-grid" class="insight-grid"></div>
+      </section>
+
+      <section class="card" style="margin-top:18px;">
+        <div class="section-head">
+          <div>
+            <h2>今日推荐卡片</h2>
+            <p>每张卡片都来自 `sample-report.json`。你换一份日报数据，页面内容就会自动变化。</p>
+          </div>
+          <div id="feed-pill" class="pill"></div>
+        </div>
+        <div id="feed-grid" class="feed-grid"></div>
+      </section>
+
+      <section class="two-col" style="margin-top:18px;">
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <h2>今天最适合你家的方向</h2>
+              <p>这里使用日报中的适配方向和近期正向反馈，帮助你收敛判断。</p>
+            </div>
+          </div>
+          <div id="fit-direction-list" class="panel-list"></div>
+        </div>
+
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <h2>今天该思考的问题</h2>
+              <p>日报每天保留一个关键问题，帮助你把“看图”转化成“逐步做决定”。</p>
+            </div>
+          </div>
+          <div id="question-list" class="panel-list"></div>
+        </div>
+      </section>
+
+      <section class="card" style="margin-top:18px;">
+        <div class="section-head">
+          <div>
+            <h2>页面背后的系统输出</h2>
+            <p>这部分对应采集、模型整理和反馈回流，方便后续直接扩成真正的数据产品。</p>
+          </div>
+        </div>
+        <div id="summary-grid" class="summary-grid"></div>
+      </section>
+
+      <div class="footer">
+        当前版本直接读取 `sample-report.json`，反馈暂存浏览器本地。后续只要把真实日报 JSON 接上，页面就能继续复用。
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "renovation_daily_feedback_v1";
+    const gradients = [
+      "linear-gradient(180deg, rgba(191,219,254,0.18), rgba(96,165,250,0.34))",
+      "linear-gradient(180deg, rgba(254,215,170,0.18), rgba(251,146,60,0.3))",
+      "linear-gradient(180deg, rgba(216,180,254,0.16), rgba(167,139,250,0.32))",
+      "linear-gradient(180deg, rgba(187,247,208,0.14), rgba(34,197,94,0.3))",
+      "linear-gradient(180deg, rgba(191,219,254,0.16), rgba(37,99,235,0.32))",
+      "linear-gradient(180deg, rgba(254,205,211,0.18), rgba(244,114,182,0.28))"
+    ];
+
+    function loadFeedback() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function saveFeedback(entries) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    }
+
+    function recordFeedback(payload) {
+      const entries = loadFeedback();
+      entries.push(payload);
+      saveFeedback(entries);
+      updateFeedbackBanner();
+    }
+
+    function updateFeedbackBanner() {
+      const entries = loadFeedback();
+      const title = document.getElementById("feedback-title");
+      const subtitle = document.getElementById("feedback-subtitle");
+      title.textContent = `反馈记录已开启，当前已保存 ${entries.length} 条本地动作`;
+      subtitle.textContent = "静态 Demo 无法直接改写本地文件，因此先使用浏览器本地存储模拟 actions.jsonl 回流。";
+    }
+
+    function formatNumber(value) {
+      if (!value) return "0";
+      if (value >= 10000) return `${(value / 10000).toFixed(1)}w`;
+      if (value >= 1000) return `${(value / 1000).toFixed(1)}k`;
+      return String(value);
+    }
+
+    function formatRelativeDate(dateText) {
+      if (!dateText) return "时间未知";
+      const date = new Date(dateText);
+      const diffMs = Date.now() - date.getTime();
+      const diffDays = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+      if (diffDays === 0) return "今天";
+      if (diffDays === 1) return "1 天前";
+      if (diffDays < 7) return `${diffDays} 天前`;
+      if (diffDays < 30) return `${Math.floor(diffDays / 7)} 周前`;
+      return `${Math.floor(diffDays / 30)} 个月前`;
+    }
+
+    function createTag(label, type = "") {
+      return `<span class="tag ${type}">${label}</span>`;
+    }
+
+    function buildHero(report) {
+      const profile = report.user_profile_snapshot;
+      document.getElementById("hero-title").innerHTML = `每天 ${report.daily_digest.estimated_read_minutes} 分钟<br />把海量装修内容变成可判断的灵感流`;
+      document.getElementById("hero-description").textContent = report.summary.headline;
+
+      const heroTags = [
+        `四口常住`,
+        `两个儿子`,
+        `${profile.house_area_net_sqm} 平到手`,
+        profile.cooking_frequency,
+        profile.residency_plan
+      ];
+      document.getElementById("hero-tags").innerHTML = heroTags.map((tag) => `<span class="badge">${tag}</span>`).join("");
+    }
+
+    function buildStats(report) {
+      const stats = [
+        {
+          label: "今日新增素材",
+          value: report.source_stats.raw_items,
+          desc: `去重后 ${report.source_stats.deduplicated_items} 条，来自 ${report.source_stats.source_breakdown.length} 个来源`
+        },
+        {
+          label: "筛选后推荐",
+          value: report.source_stats.recommended_items,
+          desc: `控制在 ${report.daily_digest.estimated_read_minutes} 分钟左右可浏览完成`
+        },
+        {
+          label: "今日主题",
+          value: "儿童房 / 客厅角",
+          desc: report.today_focus.slice(0, 2).join("；")
+        },
+        {
+          label: "反馈偏好",
+          value: report.feedback_summary.recent_positive_patterns[0],
+          desc: `近期偏好：${report.feedback_summary.recent_positive_patterns.slice(0, 4).join(" / ")}`
+        }
+      ];
+
+      document.getElementById("quick-stats").innerHTML = stats.map((stat) => `
+        <div class="stat">
+          <div class="subtle">${stat.label}</div>
+          <strong>${stat.value}</strong>
+          <div class="subtle">${stat.desc}</div>
+        </div>
+      `).join("");
+    }
+
+    function buildInsights(report) {
+      const insightItems = [
+        ...report.summary.highlights,
+        ...report.today_focus
+      ].slice(0, 3);
+
+      document.getElementById("insight-grid").innerHTML = insightItems.map((text, index) => `
+        <div class="insight">
+          <strong>重点 ${index + 1}</strong>
+          <div>${text}</div>
+        </div>
+      `).join("");
+    }
+
+    function actionButtonClass(action) {
+      if (action === "like") return "btn-like";
+      if (action === "favorite") return "btn-save";
+      if (action === "dislike") return "btn-dislike";
+      return "btn-source";
+    }
+
+    function actionLabel(action) {
+      if (action === "like") return "喜欢";
+      if (action === "favorite") return "收藏";
+      if (action === "dislike") return "不喜欢";
+      return "查看原文";
+    }
+
+    function tagType(tag) {
+      if (["二孩家庭", "长期自住", "收纳强", "高频做饭友好", "低维护", "可成长空间"].includes(tag)) return "good";
+      if (["灵感图", "海外案例", "拼贴灵感", "偏审美"].includes(tag)) return "warn";
+      if (["高维护"].includes(tag)) return "bad";
+      return "";
+    }
+
+    function recentActionForItem(itemId) {
+      const entries = loadFeedback().filter((entry) => entry.item_id === itemId);
+      return entries.length ? entries[entries.length - 1].action : "";
+    }
+
+    function buildFeed(report) {
+      const items = [...report.items].sort((a, b) => a.display_priority - b.display_priority);
+      document.getElementById("feed-pill").textContent = `${report.source_stats.recommended_items} 条精选 / 当前展示 ${items.length} 条`;
+
+      const html = items.map((item, index) => {
+        const gradient = gradients[index % gradients.length];
+        const sourceLabel = item.platform_label || item.platform;
+        const fitScore = item.fit_score ? `匹配度 ${item.fit_score.toFixed(2)}` : "待评分";
+        const meta = [
+          `点赞 ${formatNumber(item.engagement.likes)}`,
+          `收藏 ${formatNumber(item.engagement.favorites)}`,
+          `发布时间 ${formatRelativeDate(item.published_at)}`
+        ];
+        const tags = [
+          ...item.tags.style,
+          ...item.tags.space,
+          ...item.tags.family,
+          ...item.tags.features
+        ].slice(0, 6);
+        const action = recentActionForItem(item.id);
+
+        return `
+          <article class="feed-card" data-item-id="${item.id}" data-position="${index + 1}" data-platform="${item.platform}">
+            <div class="feed-cover" style="background-image:${gradient}, url('${item.cover_url}');">
+              <div class="cover-meta">
+                <div class="cover-badges">
+                  <span class="badge">${sourceLabel}</span>
+                  <span class="badge">${fitScore}</span>
+                </div>
+              </div>
+            </div>
+            <div class="feed-body">
+              <h3 class="feed-title">${item.title}</h3>
+              <div class="meta">${meta.map((m) => `<span>${m}</span>`).join("")}</div>
+              <div class="tag-row">${tags.map((tag) => createTag(tag, tagType(tag))).join("")}</div>
+              <p>${item.summary}</p>
+              <div class="reason">适合原因：${item.fit_reason}</div>
+              <div class="risk">注意点：${(item.risk_notes || []).join("；") || "暂无明显风险提示"}</div>
+              <div class="subtle">入选原因：${item.why_selected}</div>
+              <div class="actions">
+                ${["like", "favorite", "dislike"].map((name) => `
+                  <button class="${actionButtonClass(name)} ${action === name ? "button-active" : ""}" data-action="${name}">
+                    ${actionLabel(name)}
+                  </button>
+                `).join("")}
+                <button class="btn-source" data-action="open_source">查看原文</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      document.getElementById("feed-grid").innerHTML = html || `<div class="empty">今天还没有可展示的推荐卡片。</div>`;
+    }
+
+    function buildFitDirections(report) {
+      const recentPositive = report.feedback_summary.recent_positive_patterns.slice(0, 3);
+      const html = report.summary.fit_direction.map((text, index) => `
+        <div class="panel-item">
+          <strong>方向 ${index + 1}</strong>
+          <div>${text}</div>
+          ${recentPositive[index] ? `<div class="subtle" style="margin-top:8px;">近期反馈加权：${recentPositive[index]}</div>` : ""}
+        </div>
+      `).join("");
+      document.getElementById("fit-direction-list").innerHTML = html;
+    }
+
+    function buildQuestions(report) {
+      const questions = [
+        report.summary.question_of_the_day,
+        `你最想先解决的是 ${report.today_focus[0]}，还是 ${report.today_focus[1]}？`,
+        `从今天的案例看，你更偏向 ${report.daily_digest.top_tags.slice(0, 3).join(" / ")}，这个方向是不是越来越清晰了？`
+      ];
+      document.getElementById("question-list").innerHTML = questions.map((question, index) => `
+        <div class="panel-item">
+          <strong>问题 ${index + 1}</strong>
+          <div>${question}</div>
+        </div>
+      `).join("");
+    }
+
+    function buildSummary(report) {
+      const sourceNames = report.source_stats.source_breakdown.map((item) => item.platform).join(" / ");
+      const summaryCards = [
+        {
+          title: "来源统计",
+          text: `原始采集 ${report.source_stats.raw_items} 条，去重后 ${report.source_stats.deduplicated_items} 条，规则筛选 ${report.source_stats.filtered_items} 条，最终推荐 ${report.source_stats.recommended_items} 条。`,
+          highlight: true
+        },
+        {
+          title: "Minimax 输出",
+          text: `每条内容产出短摘要、标签、适配分和风险点，并汇总为今日主题、日报摘要与关键问题。`
+        },
+        {
+          title: "来源覆盖",
+          text: `当前日报来源包含 ${sourceNames}，后续只要追加采集结果并保持 JSON 结构一致，页面无需改版。`
+        }
+      ];
+
+      document.getElementById("summary-grid").innerHTML = summaryCards.map((card) => `
+        <div class="summary-card ${card.highlight ? "highlight" : ""}">
+          <h3>${card.title}</h3>
+          <p class="subtle">${card.text}</p>
+        </div>
+      `).join("");
+    }
+
+    function handleActionClick(event, report) {
+      const button = event.target.closest("button[data-action]");
+      if (!button) return;
+
+      const card = event.target.closest(".feed-card");
+      const action = button.dataset.action;
+      const itemId = card.dataset.itemId;
+      const position = Number(card.dataset.position);
+      const platform = card.dataset.platform;
+
+      if (action === "open_source") {
+        const item = report.items.find((entry) => entry.id === itemId);
+        recordFeedback({
+          time: new Date().toISOString(),
+          report_id: report.report_id,
+          item_id: itemId,
+          action,
+          source: "daily_report",
+          meta: { position, platform }
+        });
+        updateCardActionState(card, "");
+        window.open(item.source_url, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      recordFeedback({
+        time: new Date().toISOString(),
+        report_id: report.report_id,
+        item_id: itemId,
+        action,
+        source: "daily_report",
+        meta: { position, platform }
+      });
+      updateCardActionState(card, action);
+    }
+
+    function updateCardActionState(card, action) {
+      card.querySelectorAll("button[data-action='like'], button[data-action='favorite'], button[data-action='dislike']").forEach((button) => {
+        button.classList.toggle("button-active", button.dataset.action === action);
+      });
+      updateFeedbackBanner();
+    }
+
+    function exportActions() {
+      const entries = loadFeedback();
+      const content = entries.map((entry) => JSON.stringify(entry)).join("\n");
+      const blob = new Blob([content], { type: "application/x-ndjson;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "local-actions-export.jsonl";
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function init() {
+      try {
+        const response = await fetch("./sample-report.json", { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`读取日报数据失败，状态码 ${response.status}`);
+        }
+
+        const report = await response.json();
+        buildHero(report);
+        buildStats(report);
+        buildInsights(report);
+        buildFeed(report);
+        buildFitDirections(report);
+        buildQuestions(report);
+        buildSummary(report);
+        updateFeedbackBanner();
+
+        document.getElementById("feed-grid").addEventListener("click", (event) => handleActionClick(event, report));
+        document.getElementById("export-actions").addEventListener("click", exportActions);
+        document.getElementById("clear-actions").addEventListener("click", () => {
+          localStorage.removeItem(STORAGE_KEY);
+          buildFeed(report);
+          updateFeedbackBanner();
+        });
+
+        document.getElementById("loading").hidden = true;
+        document.getElementById("app").hidden = false;
+      } catch (error) {
+        const errorBox = document.getElementById("error-box");
+        errorBox.hidden = false;
+        errorBox.textContent = `${error.message}。请通过本地静态服务打开页面，并确认 sample-report.json 与 HTML 在同一目录。`;
+        document.getElementById("loading").hidden = true;
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

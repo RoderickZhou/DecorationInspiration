@@ -1,0 +1,322 @@
+{
+  "report_date": "2026-04-30",
+  "generated_at": "2026-04-30T19:30:00+08:00",
+  "report_id": "daily_report_2026_04_30",
+  "user_profile_version": "v1",
+  "user_profile_snapshot": {
+    "house_area_gross_sqm": 132,
+    "house_area_net_sqm": 98,
+    "layout_preference": "3室",
+    "household": {
+      "adults": 2,
+      "children": [
+        {
+          "role": "elder_son",
+          "age": 7
+        },
+        {
+          "role": "younger_son",
+          "age_months": 8
+        }
+      ]
+    },
+    "residency_plan": "纯自住长期居住",
+    "cooking_frequency": "高频做饭",
+    "key_needs": [
+      "儿童房规划",
+      "客厅功能角",
+      "厨房与餐边柜",
+      "全屋收纳",
+      "低维护",
+      "长期耐住"
+    ]
+  },
+  "source_stats": {
+    "raw_items": 186,
+    "deduplicated_items": 94,
+    "filtered_items": 37,
+    "recommended_items": 14,
+    "source_breakdown": [
+      {
+        "platform": "xiaohongshu",
+        "raw_items": 62,
+        "recommended_items": 5
+      },
+      {
+        "platform": "haohaozhu",
+        "raw_items": 28,
+        "recommended_items": 3
+      },
+      {
+        "platform": "yidoutang",
+        "raw_items": 19,
+        "recommended_items": 2
+      },
+      {
+        "platform": "pinterest",
+        "raw_items": 41,
+        "recommended_items": 2
+      },
+      {
+        "platform": "huaban",
+        "raw_items": 21,
+        "recommended_items": 1
+      },
+      {
+        "platform": "houzz",
+        "raw_items": 15,
+        "recommended_items": 1
+      }
+    ]
+  },
+  "today_focus": [
+    "儿童房短期先一睡一玩是否更适合当前阶段",
+    "客厅功能角如何嵌入公共空间",
+    "厨房和餐边柜如何同时提升做饭效率与收纳"
+  ],
+  "summary": {
+    "headline": "今天推荐更偏向二孩家庭、长期自住、原木简约与实景落地型案例。",
+    "highlights": [
+      "一睡一玩型儿童房方案明显增多，适合你家当前孩子年龄差",
+      "客厅功能角更多出现在整墙收纳、边角书桌和餐边柜延伸方案里",
+      "高频做饭家庭的高匹配案例普遍更重视餐边柜、电器整合和备餐台面"
+    ],
+    "question_of_the_day": "对于你家现在的孩子年龄结构，儿童房短期先一睡一玩，是否比立刻彻底分房更实用？",
+    "fit_direction": [
+      "优先看原木或温暖简约，不急着追求高维护的网红感风格",
+      "优先看实景落地案例，不要让概念图主导判断",
+      "继续重点观察儿童房、客厅功能角和厨房收纳三个主题"
+    ]
+  },
+  "daily_digest": {
+    "estimated_read_minutes": 3,
+    "recommended_browse_order": [
+      "儿童房",
+      "客厅功能角",
+      "厨房与餐边柜",
+      "风格拓展"
+    ],
+    "top_tags": [
+      "二孩家庭",
+      "原木",
+      "客厅功能角",
+      "餐边柜",
+      "收纳强"
+    ]
+  },
+  "items": [
+    {
+      "id": "xiaohongshu_20260430_001",
+      "platform": "xiaohongshu",
+      "platform_label": "小红书",
+      "title": "98平二孩家庭原木风三居，先做一睡一玩的儿童房",
+      "source_url": "https://example.com/xiaohongshu/post/20260430_001",
+      "cover_url": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "住进原木里",
+      "published_at": "2026-04-28T20:12:00+08:00",
+      "engagement": {
+        "likes": 3248,
+        "favorites": 2411,
+        "comments": 387
+      },
+      "tags": {
+        "style": ["原木", "现代简约"],
+        "space": ["儿童房", "客厅", "厨房"],
+        "family": ["二孩家庭", "长期自住", "三居"],
+        "features": ["客厅功能角", "收纳强", "低维护"]
+      },
+      "summary": "二孩家庭实景案例，先做一睡一玩，客厅再嵌入大人功能角，整体对你家很有参考价值。",
+      "fit_score": 0.91,
+      "fit_reason": "面积、家庭结构、使用周期和生活方式都与用户高度接近，尤其适合解决儿童房与客厅功能角的组合问题。",
+      "risk_notes": [
+        "开放格略多，杂物管理要再加强",
+        "儿童玩具和学习用品需要补充隐藏收纳"
+      ],
+      "why_selected": "同时命中儿童房、客厅功能角、二孩家庭和长期自住四个高优先级条件。",
+      "display_priority": 1
+    },
+    {
+      "id": "haohaozhu_20260430_013",
+      "platform": "haohaozhu",
+      "platform_label": "好好住",
+      "title": "高频做饭家庭的厨房+餐边柜整合思路",
+      "source_url": "https://example.com/haohaozhu/post/20260430_013",
+      "cover_url": "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "饭点实验室",
+      "published_at": "2026-04-25T18:40:00+08:00",
+      "engagement": {
+        "likes": 1127,
+        "favorites": 984,
+        "comments": 116
+      },
+      "tags": {
+        "style": ["现代简约"],
+        "space": ["厨房", "餐边柜"],
+        "family": ["长期自住"],
+        "features": ["高频做饭友好", "收纳强", "易清洁"]
+      },
+      "summary": "这类方案不一定最惊艳，但很适合高频做饭家庭，重点在备餐台面、电器整合和餐边柜动线。",
+      "fit_score": 0.88,
+      "fit_reason": "用户明确是高频做饭家庭，厨房和餐边柜优先级高，这条内容与实际生活方式高度匹配。",
+      "risk_notes": [
+        "如果只学外观，容易忽略插座和电器尺寸",
+        "餐边柜深度和冰箱开门距离要实测"
+      ],
+      "why_selected": "命中高频做饭、餐边柜和收纳强需求，属于用户应优先吸收的实用案例。",
+      "display_priority": 2
+    },
+    {
+      "id": "yidoutang_20260430_021",
+      "platform": "yidoutang",
+      "platform_label": "一兜糖",
+      "title": "二孩家庭先活动后分房的过渡型儿童区",
+      "source_url": "https://example.com/yidoutang/post/20260430_021",
+      "cover_url": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "糖系亲子屋",
+      "published_at": "2026-04-27T15:05:00+08:00",
+      "engagement": {
+        "likes": 892,
+        "favorites": 742,
+        "comments": 94
+      },
+      "tags": {
+        "style": ["温暖简约"],
+        "space": ["儿童房"],
+        "family": ["二孩家庭", "有婴儿", "学龄儿童"],
+        "features": ["可成长空间", "儿童活动区", "低维护"]
+      },
+      "summary": "特别适合你现在这种孩子年龄差，先保证哥哥学习和弟弟活动，再逐步过渡到更明确的分房。",
+      "fit_score": 0.9,
+      "fit_reason": "内容直接对应用户当前最核心的不确定问题，比单纯的风格内容更具决策价值。",
+      "risk_notes": [
+        "后期兄弟作息差异变大时仍需改造",
+        "活动区与学习区要避免互相打扰"
+      ],
+      "why_selected": "对当前阶段最有启发性，能帮助用户形成儿童房规划思路。",
+      "display_priority": 3
+    },
+    {
+      "id": "pinterest_20260430_008",
+      "platform": "pinterest",
+      "platform_label": "Pinterest",
+      "title": "客厅边角工作台与整墙收纳一体灵感",
+      "source_url": "https://example.com/pinterest/pin/20260430_008",
+      "cover_url": "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "Daily Space Mood",
+      "published_at": "2026-04-29T11:10:00+08:00",
+      "engagement": {
+        "likes": 0,
+        "favorites": 0,
+        "comments": 0
+      },
+      "tags": {
+        "style": ["原木", "简约"],
+        "space": ["客厅"],
+        "family": ["长期自住"],
+        "features": ["客厅功能角", "整墙收纳", "灵感图"]
+      },
+      "summary": "适合你找客厅功能角的视觉方向，但更偏灵感，需要配合真实落地案例一起看。",
+      "fit_score": 0.74,
+      "fit_reason": "虽然不是典型实景屋主案例，但对用户想在客厅保留自己的角落这件事有直接启发。",
+      "risk_notes": [
+        "更偏灵感图，落地细节不足",
+        "需要结合国内户型尺寸再判断"
+      ],
+      "why_selected": "补充客厅功能角的想象空间，防止用户只看到常规模板。",
+      "display_priority": 4
+    },
+    {
+      "id": "huaban_20260430_006",
+      "platform": "huaban",
+      "platform_label": "花瓣",
+      "title": "奶油风儿童房拼贴灵感合集",
+      "source_url": "https://example.com/huaban/pin/20260430_006",
+      "cover_url": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "Mood Collector",
+      "published_at": "2026-04-29T08:45:00+08:00",
+      "engagement": {
+        "likes": 0,
+        "favorites": 0,
+        "comments": 0
+      },
+      "tags": {
+        "style": ["奶油风"],
+        "space": ["儿童房"],
+        "family": ["二孩家庭"],
+        "features": ["拼贴灵感", "高颜值", "偏审美"]
+      },
+      "summary": "适合开脑洞和建立审美边界，但更像风格参考，不适合直接作为落地答案。",
+      "fit_score": 0.63,
+      "fit_reason": "能帮助用户判断自己是否喜欢这类柔和审美，但不属于当前阶段最优先的实用内容。",
+      "risk_notes": [
+        "维护成本偏高",
+        "很多画面缺少真实收纳和耐用性信息"
+      ],
+      "why_selected": "作为风格对照样本存在，帮助用户逐步形成偏好边界。",
+      "display_priority": 5
+    },
+    {
+      "id": "houzz_20260430_004",
+      "platform": "houzz",
+      "platform_label": "Houzz",
+      "title": "客餐厅一体的欧美家庭收纳案例",
+      "source_url": "https://example.com/houzz/project/20260430_004",
+      "cover_url": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+      "image_urls": [
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "author": "Studio North",
+      "published_at": "2026-04-26T22:00:00+08:00",
+      "engagement": {
+        "likes": 0,
+        "favorites": 0,
+        "comments": 0
+      },
+      "tags": {
+        "style": ["现代简约"],
+        "space": ["客厅", "餐厅"],
+        "family": ["长期自住"],
+        "features": ["整墙收纳", "家庭动线", "海外案例"]
+      },
+      "summary": "适合借鉴客餐厅整合和整墙收纳，但要注意家电习惯和空间尺寸的本地化处理。",
+      "fit_score": 0.69,
+      "fit_reason": "虽然与国内家庭存在差异，但能帮助用户跳出常规布局，获得更宽的空间想法。",
+      "risk_notes": [
+        "海外厨房和客餐厅关系与国内差异大",
+        "电器和收纳习惯需要重新适配"
+      ],
+      "why_selected": "作为趋势补充样本，帮助用户形成空间整合的新思路。",
+      "display_priority": 6
+    }
+  ],
+  "feedback_summary": {
+    "recent_positive_patterns": [
+      "原木",
+      "二孩家庭",
+      "儿童房过渡型方案",
+      "客厅功能角",
+      "餐边柜"
+    ],
+    "recent_negative_patterns": [
+      "纯概念图",
+      "过度装饰",
+      "高维护儿童房"
+    ]
+  }
+}

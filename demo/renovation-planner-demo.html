@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>装修决策助手 Demo</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --panel: #ffffff;
+      --panel-soft: #f8fafc;
+      --text: #1f2937;
+      --muted: #667085;
+      --line: #e5e7eb;
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --good: #15803d;
+      --warn: #b45309;
+      --bad: #b91c1c;
+      --shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, #eef3ff 0%, var(--bg) 220px);
+      color: var(--text);
+    }
+
+    .container {
+      width: min(1200px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .hero-main {
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6 52%, #60a5fa);
+      color: #fff;
+      min-height: 240px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.16);
+      width: fit-content;
+      font-size: 13px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 34px;
+      line-height: 1.15;
+      margin: 16px 0 10px;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      line-height: 1.65;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.16);
+      font-size: 13px;
+    }
+
+    .score-grid,
+    .metrics,
+    .two-col,
+    .three-col,
+    .four-col {
+      display: grid;
+      gap: 16px;
+    }
+
+    .metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-content: start;
+    }
+
+    .metric {
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 28px;
+      margin-top: 8px;
+    }
+
+    .subtle {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 10px 0 18px;
+    }
+
+    .tab {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-size: 14px;
+    }
+
+    .tab.active {
+      border-color: transparent;
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .two-col {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+
+    .three-col {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .four-col {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .section-title {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 680px;
+      line-height: 1.6;
+    }
+
+    .list,
+    .roadmap,
+    .table,
+    .feed,
+    .steps {
+      display: grid;
+      gap: 12px;
+    }
+
+    .item,
+    .roadmap-item,
+    .feed-card,
+    .step,
+    .company-row {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      background: var(--panel-soft);
+    }
+
+    .item strong,
+    .feed-card strong,
+    .company-row strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      font-size: 12px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: var(--primary-soft);
+      color: #1d4ed8;
+    }
+
+    .tag.good {
+      background: #dcfce7;
+      color: var(--good);
+    }
+
+    .tag.warn {
+      background: #fef3c7;
+      color: var(--warn);
+    }
+
+    .tag.bad {
+      background: #fee2e2;
+      color: var(--bad);
+    }
+
+    .table {
+      gap: 10px;
+    }
+
+    .table-head,
+    .company-row {
+      display: grid;
+      grid-template-columns: 1.2fr 0.9fr 0.8fr 1.1fr 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .table-head {
+      padding: 0 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .price-card {
+      background: linear-gradient(180deg, #fff, #f8fbff);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .price-card strong {
+      display: block;
+      font-size: 24px;
+      margin: 8px 0;
+    }
+
+    .kpi-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .kpi {
+      flex: 1;
+      min-width: 120px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stage {
+      border-radius: 16px;
+      padding: 14px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      min-height: 150px;
+    }
+
+    .stage strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .stage ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .warn-box,
+    .ok-box {
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .warn-box {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+    }
+
+    .ok-box {
+      background: #ecfdf3;
+      border: 1px solid #bbf7d0;
+    }
+
+    .footer {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .two-col,
+      .three-col,
+      .four-col,
+      .pipeline,
+      .table-head,
+      .company-row {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        width: min(100vw - 20px, 1200px);
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <div class="card hero-main">
+        <div>
+          <div class="eyebrow">装修决策助手 / 产品假 demo</div>
+          <h1>把装修从“信息过载”<br />变成“可比较、可推理、可执行”</h1>
+          <p>
+            这个 demo 展示的不是单纯的爬虫，而是一套围绕你和家人的生活方式做推荐的装修决策系统：
+            问卷采集、风格匹配、预算拆分、装修公司筛选、家具家电选购、经验内容沉淀与比价。
+          </p>
+        </div>
+        <div class="chips">
+          <span class="chip">户型与预算建模</span>
+          <span class="chip">生活习惯驱动推荐</span>
+          <span class="chip">装修公司评分</span>
+          <span class="chip">家具家电组合建议</span>
+          <span class="chip">经验内容采集台</span>
+        </div>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="subtle">推荐匹配度</div>
+          <strong>87%</strong>
+          <div class="subtle">偏好现代原木 + 收纳优先 + 有孩子</div>
+        </div>
+        <div class="metric">
+          <div class="subtle">预算健康度</div>
+          <strong>72/100</strong>
+          <div class="subtle">软装比例略高，建议先控柜体与电器</div>
+        </div>
+        <div class="metric">
+          <div class="subtle">候选装修公司</div>
+          <strong>6 家</strong>
+          <div class="subtle">按口碑、增项风险、施工透明度排序</div>
+        </div>
+        <div class="metric">
+          <div class="subtle">经验内容条目</div>
+          <strong>1,248</strong>
+          <div class="subtle">公共页面、手动导入、浏览器采集混合</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <div>
+          <h2>核心工作台</h2>
+          <p>通过问卷、推荐、比价、公司筛选、经验采集五个面板，串起整个装修决策流程。</p>
+        </div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="tab-profile">家庭画像</button>
+        <button class="tab" data-tab="tab-style">风格与空间</button>
+        <button class="tab" data-tab="tab-company">装修公司筛选</button>
+        <button class="tab" data-tab="tab-shopping">家具家电与比价</button>
+        <button class="tab" data-tab="tab-source">经验采集台</button>
+      </div>
+
+      <div id="tab-profile" class="panel active">
+        <div class="two-col">
+          <div class="list">
+            <div class="item">
+              <strong>家庭基础画像</strong>
+              夫妻二人 + 1 个学龄前儿童 + 偶尔老人来住，建筑面积 118 平，三居两卫，准备长期自住 10 年以上。
+              <div class="tag-row">
+                <span class="tag">长期自住</span>
+                <span class="tag">有孩子</span>
+                <span class="tag">需要客房</span>
+                <span class="tag">收纳优先</span>
+              </div>
+            </div>
+            <div class="item">
+              <strong>生活习惯采集</strong>
+              做饭频率高、早晚高峰双卫需求、喜欢扫地机器人、家里杂物多、能接受无主灯但不接受维护复杂。
+              <div class="bar"><span style="width: 84%"></span></div>
+            </div>
+            <div class="item">
+              <strong>系统输出的装修原则</strong>
+              玄关储物要前置；厨房和餐边柜要强调易清洁；儿童活动区优先圆角与环保；双卫干湿分离优先级高于浴缸。
+            </div>
+          </div>
+
+          <div class="card" style="padding:18px;">
+            <h3>AI 初步建议</h3>
+            <div class="roadmap">
+              <div class="roadmap-item">
+                <strong>第一原则：先定居住策略，再定风格</strong>
+                先锁定收纳、清洁、动线、耐用性，再让视觉风格服务功能。
+              </div>
+              <div class="roadmap-item">
+                <strong>第二原则：预算切三层</strong>
+                硬装基础层、定制与电器层、软装升级层分别管理，防止前期透支。
+              </div>
+              <div class="roadmap-item">
+                <strong>第三原则：经验内容只作为证据，不直接当答案</strong>
+                平台内容要做标签化、去重、可信度评分，避免被单个博主带偏。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-style" class="panel">
+        <div class="three-col">
+          <div class="item">
+            <strong>风格推荐 1：现代原木</strong>
+            匹配度 87%。适合长期居住、儿童家庭、追求温暖感和耐看性的人群。
+            <div class="tag-row">
+              <span class="tag good">耐看</span>
+              <span class="tag good">好搭家具</span>
+              <span class="tag warn">木色控制难</span>
+            </div>
+          </div>
+          <div class="item">
+            <strong>风格推荐 2：奶油极简</strong>
+            匹配度 74%。视觉轻盈，但对材质统一和日常维护要求更高。
+            <div class="tag-row">
+              <span class="tag good">上镜</span>
+              <span class="tag warn">容易显脏</span>
+              <span class="tag warn">预算敏感</span>
+            </div>
+          </div>
+          <div class="item">
+            <strong>风格推荐 3：中古混搭</strong>
+            匹配度 61%。个性强，但对选品能力和软装审美要求高，不适合首次装修作为主方向。
+            <div class="tag-row">
+              <span class="tag good">辨识度高</span>
+              <span class="tag bad">容错低</span>
+              <span class="tag bad">难控预算</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="two-col" style="margin-top:16px;">
+          <div class="card" style="padding:18px;">
+            <h3>空间优先级建议</h3>
+            <div class="list">
+              <div class="item">
+                <strong>玄关</strong>
+                重点做换鞋凳、临时挂衣区、雨伞和清洁工具隐藏式收纳。
+              </div>
+              <div class="item">
+                <strong>厨房</strong>
+                优先提升备菜台面长度、餐边柜插座规划、冰箱开门半径与动线。
+              </div>
+              <div class="item">
+                <strong>儿童房</strong>
+                当前先满足睡眠与收纳，学习区预留可成长空间，不急着一次做满。
+              </div>
+            </div>
+          </div>
+          <div class="card" style="padding:18px;">
+            <h3>系统自动避坑提示</h3>
+            <div class="warn-box">
+              你家的画像不建议追求过度悬浮、复杂灯带、大量开放格和浅色微水泥全屋通刷。它们在内容平台上好看，但与你的维护成本和家庭使用场景不匹配。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-company" class="panel">
+        <div class="table">
+          <div class="table-head">
+            <div>公司</div>
+            <div>综合评分</div>
+            <div>报价区间</div>
+            <div>风险判断</div>
+            <div>适配原因</div>
+          </div>
+          <div class="company-row">
+            <div>
+              <strong>住好家整装</strong>
+              本地交付案例多，水电报价透明
+            </div>
+            <div>89 / 100</div>
+            <div>16-18 万</div>
+            <div><span class="tag good">增项风险低</span></div>
+            <div>适合你这种重视流程和长期自住的家庭</div>
+          </div>
+          <div class="company-row">
+            <div>
+              <strong>木白设计</strong>
+              设计能力强，施工依赖项目经理
+            </div>
+            <div>81 / 100</div>
+            <div>18-22 万</div>
+            <div><span class="tag warn">设计强于交付</span></div>
+            <div>适合对风格完成度要求高的人</div>
+          </div>
+          <div class="company-row">
+            <div>
+              <strong>安筑装饰</strong>
+              价格低，套餐条款复杂
+            </div>
+            <div>68 / 100</div>
+            <div>13-15 万</div>
+            <div><span class="tag bad">低价引流风险</span></div>
+            <div>除非预算非常紧，否则不建议优先</div>
+          </div>
+        </div>
+
+        <div class="four-col" style="margin-top:16px;">
+          <div class="price-card">
+            <div class="subtle">评分因子</div>
+            <strong>合同透明度</strong>
+            <div class="subtle">看付款节点、增项规则、材料替换条件</div>
+          </div>
+          <div class="price-card">
+            <div class="subtle">评分因子</div>
+            <strong>施工稳定性</strong>
+            <div class="subtle">看项目经理稳定度、工期履约率、返工率</div>
+          </div>
+          <div class="price-card">
+            <div class="subtle">评分因子</div>
+            <strong>真实口碑密度</strong>
+            <div class="subtle">看多平台交叉验证，不看单平台爆款案例</div>
+          </div>
+          <div class="price-card">
+            <div class="subtle">评分因子</div>
+            <strong>画像适配度</strong>
+            <div class="subtle">看是否做过同面积、同家庭结构、同预算案例</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-shopping" class="panel">
+        <div class="two-col">
+          <div>
+            <div class="section-title">
+              <div>
+                <h3>家具家电组合推荐</h3>
+                <p>不是单品搜索，而是围绕空间用途和预算做组合建议。</p>
+              </div>
+            </div>
+            <div class="list">
+              <div class="item">
+                <strong>客厅组合 A</strong>
+                三人位沙发 + 模块茶几 + 可折叠边几 + 65 寸电视 + 扫地机器人基站隐藏柜
+                <div class="tag-row">
+                  <span class="tag good">适合有孩子</span>
+                  <span class="tag good">易清洁</span>
+                  <span class="tag warn">布艺耐脏要重点选</span>
+                </div>
+              </div>
+              <div class="item">
+                <strong>厨房电器组合</strong>
+                大容量冰箱 + 独立洗碗机 + 烟灶套装 + 小厨电集中插座区
+                <div class="tag-row">
+                  <span class="tag good">做饭频率高</span>
+                  <span class="tag good">提升日常体验</span>
+                </div>
+              </div>
+              <div class="item">
+                <strong>主卧组合</strong>
+                1.8 米床 + 分区衣柜 + 遮光窗帘 + 床头感应灯
+                <div class="tag-row">
+                  <span class="tag">舒适优先</span>
+                  <span class="tag">低维护</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="section-title">
+              <div>
+                <h3>比价引擎</h3>
+                <p>横向比较品牌店、电商平台、线下卖场与团购渠道，给出“最低价”和“最稳妥价”。</p>
+              </div>
+            </div>
+            <div class="list">
+              <div class="price-card">
+                <div class="subtle">示例商品：13 套洗碗机</div>
+                <strong>最划算价：¥ 4,699</strong>
+                <div class="subtle">渠道：品牌直播专场，含基础安装</div>
+                <div class="kpi-row">
+                  <div class="kpi">全网均价<br /><strong style="font-size:18px;">¥ 5,280</strong></div>
+                  <div class="kpi">价保成功率<br /><strong style="font-size:18px;">82%</strong></div>
+                </div>
+              </div>
+              <div class="price-card">
+                <div class="subtle">示例商品：原木餐桌</div>
+                <strong>最稳妥价：¥ 2,980</strong>
+                <div class="subtle">渠道：本地家具城现货，支持看板和补漆</div>
+                <div class="kpi-row">
+                  <div class="kpi">线上最低<br /><strong style="font-size:18px;">¥ 2,560</strong></div>
+                  <div class="kpi">售后风险<br /><strong style="font-size:18px;">中</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-source" class="panel">
+        <div class="section-title">
+          <div>
+            <h3>经验采集台</h3>
+            <p>建议把“内容采集”做成多来源知识库，而不是单纯追求全平台无差别爬取。可支持公共页面抓取、用户授权导入、浏览器辅助采集、手动收藏归档。</p>
+          </div>
+        </div>
+
+        <div class="pipeline">
+          <div class="stage">
+            <strong>1. 来源接入</strong>
+            <ul>
+              <li>公共网页</li>
+              <li>手动粘贴链接</li>
+              <li>浏览器辅助采集</li>
+              <li>用户导入截图/笔记</li>
+            </ul>
+          </div>
+          <div class="stage">
+            <strong>2. 会话与权限</strong>
+            <ul>
+              <li>登录状态管理</li>
+              <li>Cookie 隔离</li>
+              <li>账号限流</li>
+              <li>来源可追踪</li>
+            </ul>
+          </div>
+          <div class="stage">
+            <strong>3. 抽取与标准化</strong>
+            <ul>
+              <li>标题/正文/图片</li>
+              <li>作者与互动数据</li>
+              <li>空间标签</li>
+              <li>预算标签</li>
+            </ul>
+          </div>
+          <div class="stage">
+            <strong>4. 内容理解</strong>
+            <ul>
+              <li>风格识别</li>
+              <li>户型识别</li>
+              <li>避坑/推荐句提取</li>
+              <li>情绪与可信度</li>
+            </ul>
+          </div>
+          <div class="stage">
+            <strong>5. 知识沉淀</strong>
+            <ul>
+              <li>去重聚类</li>
+              <li>证据卡片</li>
+              <li>案例库</li>
+              <li>问题清单</li>
+            </ul>
+          </div>
+          <div class="stage">
+            <strong>6. 决策输出</strong>
+            <ul>
+              <li>装修建议</li>
+              <li>公司比较</li>
+              <li>价格区间</li>
+              <li>采购清单</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="two-col" style="margin-top:16px;">
+          <div class="ok-box">
+            推荐的可行路线：以“浏览器自动化 + 用户主动授权 + 公共内容归档”为主，优先保证稳定性与合规性，再做平台适配层。这个方向产品上足够强，也更容易长期维护。
+          </div>
+          <div class="warn-box">
+            高风险路线：依赖私有 API、签名逆向、频繁规避限制。短期可能快，但维护成本高、失效快，还可能带来平台条款与合规风险，不适合作为核心商业能力。
+          </div>
+        </div>
+
+        <div class="feed" style="margin-top:16px;">
+          <div class="feed-card">
+            <strong>采集案例：小红书 - 厨房高频踩坑</strong>
+            来源方式：浏览器采集 / 用户登录态辅助
+            <div class="tag-row">
+              <span class="tag">厨房</span>
+              <span class="tag">插座</span>
+              <span class="tag">餐边柜</span>
+              <span class="tag warn">内容可信度 0.62</span>
+            </div>
+          </div>
+          <div class="feed-card">
+            <strong>采集案例：知乎 - 装修公司合同避坑</strong>
+            来源方式：公开回答抓取 / 结构化抽取
+            <div class="tag-row">
+              <span class="tag">合同</span>
+              <span class="tag">增项</span>
+              <span class="tag">付款节点</span>
+              <span class="tag good">可信度 0.79</span>
+            </div>
+          </div>
+          <div class="feed-card">
+            <strong>采集案例：抖音 - 卫生间干湿分离案例</strong>
+            来源方式：公开视频摘要 / 手动收藏入库
+            <div class="tag-row">
+              <span class="tag">卫生间</span>
+              <span class="tag">玻璃隔断</span>
+              <span class="tag warn">视频要素需二次核验</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:20px;">
+      <div class="section-title">
+        <div>
+          <h2>建议的产品分期</h2>
+          <p>先做能真正帮你决策的 MVP，再逐步增强采集能力，而不是一上来就做重型全平台爬虫。</p>
+        </div>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <strong>Phase 1：装修决策 MVP</strong>
+          问卷画像、风格推荐、预算拆分、装修公司评分、家具家电清单、手动收藏经验内容。
+        </div>
+        <div class="step">
+          <strong>Phase 2：经验知识库</strong>
+          加入网页采集、浏览器辅助采集、去重标签化、案例检索、问题清单生成。
+        </div>
+        <div class="step">
+          <strong>Phase 3：智能比价与城市供给</strong>
+          商品渠道比价、本地卖场价格地图、装修公司城市化模型、交付反馈回流。
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      Demo 文件：可直接本地打开预览。这个版本用于展示产品思路、信息架构和交互方向，不代表最终视觉稿。
+    </div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll(".tab");
+    const panels = document.querySelectorAll(".panel");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => t.classList.remove("active"));
+        panels.forEach((panel) => panel.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.tab).classList.add("active");
+      });
+    });
+  </script>
+</body>
+</html>
