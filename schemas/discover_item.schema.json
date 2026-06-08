@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/decoration-inspiration/schemas/discover_item.schema.json",
+  "title": "DiscoverIndex",
+  "type": "object",
+  "required": ["schema_version", "items"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/DiscoverItem" }
+    }
+  },
+  "$defs": {
+    "Media": {
+      "type": "object",
+      "required": ["kind", "src"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["local", "remote"] },
+        "src": { "type": "string", "minLength": 1 },
+        "w": { "type": "number" },
+        "h": { "type": "number" }
+      }
+    },
+    "GalleryItem": {
+      "type": "object",
+      "required": ["img"],
+      "properties": {
+        "img": { "$ref": "#/$defs/Media" },
+        "caption": { "type": "string" },
+        "design_points": { "type": "array", "items": { "type": "string" } },
+        "ts": { "type": "number" }
+      }
+    },
+    "DiscoverItem": {
+      "type": "object",
+      "required": ["item_id", "source_type", "title", "cover", "tags", "gallery", "content_hash", "ingested_at"],
+      "properties": {
+        "item_id": { "type": "string", "minLength": 1 },
+        "source_type": { "type": "string", "enum": ["video", "so360", "bing", "shejiben", "to8to", "unsplash", "pexels"] },
+        "title": { "type": "string" },
+        "summary": { "type": "string" },
+        "cover": { "$ref": "#/$defs/Media" },
+        "tags": {
+          "type": "object",
+          "properties": {
+            "style": { "type": "array", "items": { "type": "string" } },
+            "space": { "type": "array", "items": { "type": "string" } },
+            "features": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "gallery": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/GalleryItem" }
+        },
+        "source_url": { "type": "string" },
+        "site": { "type": "string" },
+        "author": { "type": "string" },
+        "license": { "type": "object" },
+        "content_hash": { "type": "string" },
+        "ingested_at": { "type": "string" },
+        "fit_score": { "type": "number" },
+        "video_id": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache" />
+  <!-- 设计本等图床防盗链：带 localhost referer 会 403，不带 referer 才 200。全局禁 referer，360/本地图不受影响 -->
+  <meta name="referrer" content="no-referrer" />
+  <title>装修发现流</title>
+  <style>
+    :root {
+      --bg: #0f1115; --panel: #16181f; --panel-soft: #1c1f28;
+      --text: #f3f5fa; --muted: #8a93a6; --line: rgba(255,255,255,0.08);
+      --accent: #f59e0b; --green: #22c55e; --red: #ef4444; --blue: #3b82f6;
+      --shadow: 0 12px 24px rgba(0,0,0,0.45);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "PingFang SC","Microsoft YaHei","Segoe UI",sans-serif; background: var(--bg); color: var(--text); }
+    a { color: inherit; }
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 18px 20px 60px; }
+
+    header { position: sticky; top: 0; z-index: 40; background: rgba(15,17,21,0.94); border-bottom: 1px solid var(--line); margin: -18px -20px 14px; padding: 14px 20px 0; }
+    .brand-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .brand-row h1 { margin: 0; font-size: 19px; }
+    .nav { display: flex; gap: 14px; font-size: 13px; }
+    .nav a, .nav button { color: var(--muted); text-decoration: none; background: none; border: none; cursor: pointer; font-size: 13px; padding: 0; }
+    .nav a:hover, .nav button:hover { color: var(--text); }
+    .sub { color: var(--muted); font-size: 12px; margin: 4px 0 10px; }
+
+    .toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+    .seg { display: inline-flex; background: var(--panel-soft); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+    .seg button { background: none; border: none; color: var(--muted); padding: 6px 14px; font-size: 12px; cursor: pointer; }
+    .seg button.active { background: var(--accent); color: #0f1115; font-weight: 600; }
+    .btn { background: var(--panel-soft); color: var(--text); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: 12px; cursor: pointer; }
+    .btn:hover { background: #252834; }
+
+    .filters { margin-bottom: 12px; }
+    .tab-row, .chip-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 7px; }
+    .tab { padding: 6px 14px; border-radius: 999px; background: transparent; color: var(--muted); border: 1px solid var(--line); cursor: pointer; font-size: 12px; }
+    .tab.active { background: var(--text); color: #0f1115; border-color: var(--text); font-weight: 600; }
+    .tab.liked-tab { border-color: rgba(239,68,68,0.5); color: #fca5a5; }
+    .tab.liked-tab.active { background: var(--red); color: #fff; border-color: var(--red); }
+    .chip { padding: 4px 10px; border-radius: 6px; background: transparent; color: var(--muted); border: 1px solid var(--line); cursor: pointer; font-size: 12px; }
+    .chip.active { background: rgba(245,158,11,0.16); color: var(--accent); border-color: var(--accent); }
+
+    /* 瀑布流 */
+    .grid { column-count: 4; column-gap: 14px; }
+    @media (max-width: 1100px) { .grid { column-count: 3; } }
+    @media (max-width: 760px) { .grid { column-count: 2; } }
+    @media (max-width: 460px) { .grid { column-count: 1; } }
+    .card { break-inside: avoid; background: var(--panel); border-radius: 12px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); margin-bottom: 14px; cursor: pointer; position: relative; transition: transform .15s ease, border-color .15s ease; }
+    .card:hover { transform: translateY(-2px); border-color: rgba(245,158,11,0.4); }
+    .card .cover { width: 100%; display: block; background: var(--panel-soft); }
+    .cover-ph { aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; background: var(--panel-soft); }
+    .badges { position: absolute; top: 8px; left: 8px; display: flex; gap: 6px; }
+    .badge { font-size: 10px; padding: 2px 7px; border-radius: 999px; background: rgba(0,0,0,0.62); color: #fff; backdrop-filter: blur(4px); }
+    .badge.explore { background: rgba(245,158,11,0.9); color: #0f1115; font-weight: 700; }
+    .badge.video { background: rgba(59,130,246,0.9); }
+    /* 网格内的"喜欢"按钮——不用点开就能点 */
+    .like-btn { position: absolute; top: 8px; right: 8px; min-width: 34px; height: 34px; padding: 0 10px; border-radius: 999px; border: none; background: rgba(0,0,0,0.55); color: #fff; cursor: pointer; font-size: 16px; line-height: 34px; backdrop-filter: blur(4px); transition: transform .12s ease, background .12s ease; display: flex; align-items: center; gap: 4px; }
+    .like-btn:hover { transform: scale(1.08); }
+    .like-btn.on { background: var(--red); }
+    .like-btn .lk { font-size: 11px; }
+    .card .body { padding: 9px 11px 11px; }
+    .card .title { font-size: 12.5px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .pills { margin-top: 6px; display: flex; gap: 5px; flex-wrap: wrap; }
+    .pill { font-size: 10px; padding: 1px 7px; border-radius: 999px; background: var(--panel-soft); color: var(--muted); border: 1px solid var(--line); }
+    .pill.style { color: var(--accent); border-color: rgba(245,158,11,0.3); }
+
+    .placeholder { text-align: center; padding: 60px 20px; color: var(--muted); }
+
+    /* 详情覆盖层 */
+    .overlay { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,0.66); backdrop-filter: blur(3px); display: none; }
+    .overlay.show { display: block; }
+    .sheet { position: absolute; top: 0; right: 0; height: 100%; width: 620px; max-width: 94vw; background: var(--bg); border-left: 1px solid var(--line); overflow-y: auto; padding: 18px 22px 40px; animation: slideIn .2s ease; }
+    .sheet.wide { width: 760px; }
+    @keyframes slideIn { from { transform: translateX(30px); opacity: .4; } to { transform: none; opacity: 1; } }
+    .sheet-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+    .sheet-head h2 { margin: 0; font-size: 17px; line-height: 1.4; }
+    .close-x { background: none; border: none; color: var(--muted); font-size: 24px; cursor: pointer; line-height: 1; }
+    .close-x:hover { color: var(--text); }
+    .like-big { width: 100%; padding: 11px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-soft); color: var(--text); cursor: pointer; font-size: 15px; margin: 12px 0 16px; }
+    .like-big.on { background: var(--red); border-color: var(--red); color: #fff; font-weight: 600; }
+    .gal-item { margin-bottom: 16px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--panel); }
+    .gal-item img { width: 100%; display: block; background: var(--panel-soft); }
+    .gal-item .cap { padding: 9px 12px; font-size: 13px; line-height: 1.55; }
+    .gal-item .dp { margin: 4px 0 0; padding-left: 18px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .gal-item .ts-link { display: inline-block; margin: 6px 12px 10px; font-size: 12px; color: var(--accent); cursor: pointer; }
+    .src-link { display: inline-block; margin: 4px 0 2px; color: var(--blue); font-size: 12px; text-decoration: none; }
+    .lic { color: var(--muted); font-size: 11px; margin-top: 8px; line-height: 1.5; }
+    h4.sec { font-size: 13px; color: var(--muted); margin: 20px 0 9px; }
+    /* 详情里的"更多同类"聚合 */
+    .rel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .rel { position: relative; border-radius: 9px; overflow: hidden; border: 1px solid var(--line); cursor: pointer; background: var(--panel-soft); }
+    .rel img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+    .rel .rlike { position: absolute; top: 5px; right: 5px; width: 26px; height: 26px; border-radius: 50%; border: none; background: rgba(0,0,0,0.55); color: #fff; cursor: pointer; font-size: 13px; line-height: 26px; }
+    .rel .rlike.on { background: var(--red); }
+
+    /* 抖音沉浸 */
+    #immersive { position: fixed; inset: 0; z-index: 70; background: #000; display: none; }
+    #immersive.show { display: block; }
+    .imm-stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .imm-stage img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .imm-info { position: absolute; left: 0; right: 0; bottom: 0; padding: 60px 22px 26px; background: linear-gradient(to top, rgba(0,0,0,0.85), transparent); }
+    .imm-info h3 { margin: 0 0 6px; font-size: 17px; }
+    .imm-info .pills { margin-top: 8px; }
+    .imm-cap { color: #d8dce5; font-size: 13px; line-height: 1.5; margin-top: 6px; max-width: 70%; }
+    .imm-side { position: absolute; right: 16px; bottom: 130px; display: flex; flex-direction: column; gap: 18px; align-items: center; }
+    .imm-side button { width: 56px; height: 56px; border-radius: 50%; border: none; background: rgba(255,255,255,0.14); color: #fff; font-size: 24px; cursor: pointer; }
+    .imm-side button.like.on { background: var(--red); }
+    .imm-side .lab { font-size: 10px; color: #cbd2e0; text-align: center; margin-top: -12px; }
+    .imm-top { position: absolute; top: 14px; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 18px; color: #fff; font-size: 13px; }
+    .imm-top button { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 999px; padding: 6px 12px; cursor: pointer; font-size: 12px; }
+    .imm-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: rgba(255,255,255,0.3); font-size: 12px; pointer-events: none; }
+
+    /* 画像条形 */
+    .bars { margin: 6px 0 20px; }
+    .bar-row { display: grid; grid-template-columns: 80px 1fr 30px; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 12px; }
+    .bar-track { background: var(--panel-soft); border-radius: 6px; height: 14px; overflow: hidden; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #fbbf24); border-radius: 6px; }
+    .bar-fill.neg { background: linear-gradient(90deg, #6b7280, var(--muted)); }
+    .bar-row .nudge { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; }
+    .trend { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.6; margin-bottom: 16px; }
+    .mini-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 6px; }
+    .mini-wall img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 7px; border: 1px solid var(--line); }
+    .empty-note { color: var(--muted); font-size: 12.5px; padding: 8px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand-row">
+        <h1>🔥 装修发现流</h1>
+        <div class="nav">
+          <a href="index.html">← 主页</a>
+          <button onclick="location.hash='profile'">🎨 我的风格画像</button>
+          <button onclick="enterImmersive()">▶ 沉浸模式</button>
+          <a href="style.html">经典网格</a>
+        </div>
+      </div>
+      <div class="sub" id="sub">看到喜欢的直接点 ♥，越点越懂你想要什么风格。</div>
+      <div class="toolbar">
+        <div class="seg" id="sortseg">
+          <button data-sort="reco" class="active">✨ 为你推荐</button>
+          <button data-sort="new">🆕 最新</button>
+          <button data-sort="random">🔀 随便逛</button>
+        </div>
+        <button class="btn" onclick="reshuffle()">↻ 换一批</button>
+        <span style="color:var(--muted);font-size:12px" id="count">—</span>
+      </div>
+      <div class="filters">
+        <div class="tab-row" id="tabs"></div>
+        <div class="chip-row" id="chips"></div>
+      </div>
+    </header>
+
+    <div class="grid" id="grid"></div>
+    <div class="placeholder" id="empty" hidden>没有匹配的内容。换个筛选或点「换一批」。</div>
+  </div>
+
+  <div class="overlay" id="overlay"><div class="sheet" id="sheet"></div></div>
+
+  <div id="immersive">
+    <div class="imm-stage" id="imm-stage"></div>
+    <div class="imm-top"><button onclick="exitImmersive()">▦ 网格</button><span id="imm-pos"></span></div>
+    <div class="imm-info" id="imm-info"></div>
+    <div class="imm-side">
+      <button class="like" id="imm-like" onclick="immLike()">❤</button>
+      <div class="lab">喜欢</div>
+      <button onclick="immNext()">✕</button>
+      <div class="lab">下一个</div>
+    </div>
+    <div class="imm-hint">↑↓ 切换 · → 喜欢 · Esc 退出</div>
+  </div>
+
+  <script>
+  /* ============ 配置 ============ */
+  const RECO = {
+    delta: { like: 0.6, unlike: -0.6, view: 0.1 },
+    nsW: { style: 1.0, space: 0.7, features: 0.5 },
+    decay: 0.98, clampMin: -3, clampMax: 5, temp: 2.5,
+    wPref: 0.6, wFresh: 0.25, wNoise: 0.15, penaltySeen: 0.3, penaltyRecent: 0.4,
+    maxStreak: 3, coldThreshold: 3, recentWindow: 40, actionCap: 1000,
+  };
+  const LIKED_TAB = "❤ 我喜欢的";
+  const SPACES = ["全部","儿童房","客厅","厨房","餐厅","餐边柜","主卧","卫生间","阳台","玄关","衣帽间"];
+  const STYLES = ["原木","现代简约","温暖简约","奶油风","简约","侘寂","法式","北欧"];
+  const NS = ["style","space","features"];
+
+  /* ============ localStorage ============ */
+  const LS = { prefs:"discover_prefs_v1", actions:"discover_actions_v1", seen:"discover_seen_v1", liked:"discover_liked_v1", recent:"discover_recent_v1" };
+  function lsGet(k, d){ try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch { return d; } }
+  function lsSet(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
+
+  let prefs = lsGet(LS.prefs, null);
+  if (!prefs || !prefs.style) prefs = { style:{}, space:{}, features:{}, signals:0 };
+  let actions = lsGet(LS.actions, []);
+  let seen = lsGet(LS.seen, {});
+  let liked = lsGet(LS.liked, []);
+  let recent = lsGet(LS.recent, []);
+  function savePrefs(){ prefs.updated_at = new Date().toISOString(); lsSet(LS.prefs, prefs); }
+
+  /* ============ 状态 ============ */
+  const state = { items: [], byId: {}, activeSpace: "全部", activeStyles: new Set(), sortMode: "reco", feed: [], imm: [], immIdx: 0 };
+
+  /* ============ 工具 ============ */
+  function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+  function fmtTs(s){ s = Math.round(s||0); const m = Math.floor(s/60), ss = s%60; return m+":"+String(ss).padStart(2,"0"); }
+  function mediaUrl(m){ if (!m || !m.src) return ""; return m.kind === "local" ? "../" + m.src : m.src; }
+  function dominantStyle(it){ return (it.tags.style || [])[0] || ""; }
+  function signalCount(){ return prefs.signals || 0; }
+
+  /* ============ 推荐引擎 ============ */
+  function decayAll(){ for (const ns of NS) for (const k in prefs[ns]) prefs[ns][k] *= RECO.decay; }
+  function clamp(x,a,b){ return Math.max(a, Math.min(b, x)); }
+  function updatePrefs(item, action){
+    const d = RECO.delta[action]; if (d === undefined) return;
+    decayAll();
+    for (const ns of NS){ const w = RECO.nsW[ns]; for (const t of (item.tags[ns] || [])) prefs[ns][t] = clamp((prefs[ns][t] || 0) + d * w, RECO.clampMin, RECO.clampMax); }
+    if (action === "like") prefs.signals = (prefs.signals||0) + 1;
+    else if (action === "unlike") prefs.signals = Math.max(0, (prefs.signals||0) - 1);
+    else if (action === "view") prefs.signals = (prefs.signals||0) + 0.2;
+    savePrefs();
+  }
+  function rawScore(it){ let raw = 0; for (const ns of NS){ const w = RECO.nsW[ns]; for (const t of (it.tags[ns]||[])) raw += w * (prefs[ns][t] || 0); } return raw; }
+  const sigmoid = x => 1/(1+Math.exp(-x));
+  function score(it){
+    const pref01 = sigmoid(rawScore(it)/RECO.temp);
+    const fresh = seen[it.item_id] ? 0 : 1;
+    const seenPen = RECO.penaltySeen * (seen[it.item_id] || 0);
+    const recentPen = recent.includes(it.item_id) ? RECO.penaltyRecent : 0;
+    return RECO.wPref*pref01 + RECO.wFresh*fresh + RECO.wNoise*Math.random() - seenPen - recentPen;
+  }
+  function knownStyleSet(){ return new Set(Object.keys(prefs.style).filter(k => prefs.style[k] > 0)); }
+  function injectExplore(list){
+    const known = knownStyleSet(); if (known.size === 0) return list;
+    const eps = Math.max(0.1, 0.35 - signalCount()*0.01); const period = Math.max(3, Math.round(1/eps));
+    const isExp = it => { const ds = it.tags.style||[]; return ds.length>0 && ds.every(s => !known.has(s)); };
+    const explore = list.filter(isExp), exploit = list.filter(it => !isExp(it));
+    if (!explore.length) return list;
+    const out = []; let ei = 0;
+    for (let i=0;i<exploit.length;i++){ out.push(exploit[i]); if ((i+1) % (period-1) === 0 && ei < explore.length){ explore[ei]._explore = true; out.push(explore[ei++]); } }
+    while (ei < explore.length){ explore[ei]._explore = true; out.push(explore[ei++]); }
+    return out;
+  }
+  function breakStreaks(list){
+    const out = list.slice(), sf = x => dominantStyle(x);
+    for (let i = RECO.maxStreak; i < out.length; i++){
+      const win = out.slice(i-RECO.maxStreak, i);
+      if (win.every(x => sf(x) === sf(out[i])) && sf(out[i]) !== ""){ for (let j=i+1;j<out.length;j++){ if (sf(out[j]) !== sf(out[i])){ const t=out[i]; out[i]=out[j]; out[j]=t; break; } } }
+    }
+    return out;
+  }
+  function coldStart(pool){
+    const buckets = {};
+    for (const it of pool){ const k = dominantStyle(it) || "__"; (buckets[k] = buckets[k] || []).push(it); }
+    for (const k in buckets) buckets[k].sort(()=> Math.random()-0.5);
+    const keys = Object.keys(buckets), out = []; let added = true;
+    while (added){ added = false; for (const k of keys){ if (buckets[k].length){ out.push(buckets[k].shift()); added = true; } } }
+    return out;
+  }
+  function buildFeed(pool){
+    pool.forEach(it => { delete it._explore; });
+    if (signalCount() < RECO.coldThreshold) return coldStart(pool);
+    let list = pool.map(it => ({it, s: score(it)})).sort((a,b)=> b.s-a.s).map(x => x.it);
+    list = injectExplore(list); list = breakStreaks(list); return list;
+  }
+  function relatedItems(item, n){
+    const sset = new Set(item.tags.style||[]), spset = new Set(item.tags.space||[]);
+    if (!sset.size && !spset.size) return [];
+    return state.items.filter(it => it.item_id !== item.item_id)
+      .map(it => { const so = (it.tags.style||[]).filter(s=>sset.has(s)).length; const sp = (it.tags.space||[]).filter(s=>spset.has(s)).length; return { it, k: so*2 + sp }; })
+      .filter(x => x.k > 0).sort((a,b)=> b.k - a.k).slice(0, n||12).map(x => x.it);
+  }
+
+  /* ============ 反馈 / 喜欢 ============ */
+  function logAction(item, action){
+    actions.push({ time: new Date().toISOString(), item_id: item.item_id, action, source: "discover", meta: { platform: item.source_type } });
+    if (actions.length > RECO.actionCap) actions = actions.slice(-RECO.actionCap);
+    lsSet(LS.actions, actions);
+  }
+  function markSeen(item){ seen[item.item_id] = (seen[item.item_id]||0)+1; lsSet(LS.seen, seen); recent.unshift(item.item_id); recent = [...new Set(recent)].slice(0, RECO.recentWindow); lsSet(LS.recent, recent); }
+  function feedback(item, action){ updatePrefs(item, action); logAction(item, action); }
+  function isLiked(id){ return liked.some(f => f.id === id); }
+  function toggleLike(item){
+    const i = liked.findIndex(f => f.id === item.item_id);
+    if (i >= 0){ liked.splice(i,1); feedback(item, "unlike"); }
+    else { liked.push({ id:item.item_id, title:item.title, cover:item.cover, source_url:item.source_url||"", tags:item.tags, liked_at:new Date().toISOString() }); feedback(item, "like"); }
+    lsSet(LS.liked, liked); renderTabs();
+  }
+
+  /* ============ 筛选器 ============ */
+  function renderTabs(){
+    const el = document.getElementById("tabs"); el.innerHTML = "";
+    const likedLabel = LIKED_TAB + (liked.length ? " ("+liked.length+")" : "");
+    const tabs = ["全部", LIKED_TAB, ...SPACES.slice(1)];
+    for (const s of tabs){
+      const b = document.createElement("button");
+      const isLikedTab = s === LIKED_TAB;
+      b.className = "tab" + (isLikedTab ? " liked-tab" : "") + (state.activeSpace===s?" active":"");
+      b.textContent = isLikedTab ? likedLabel : s;
+      b.onclick = () => { state.activeSpace = s; rebuild(); renderTabs(); };
+      el.appendChild(b);
+    }
+  }
+  function renderChips(){
+    const el = document.getElementById("chips"); el.innerHTML = "";
+    for (const s of STYLES){ const b = document.createElement("button"); b.className = "chip" + (state.activeStyles.has(s)?" active":""); b.textContent = s;
+      b.onclick = () => { state.activeStyles.has(s) ? state.activeStyles.delete(s) : state.activeStyles.add(s); rebuild(); renderChips(); }; el.appendChild(b); }
+  }
+  function passFilter(it){
+    if (state.activeSpace === LIKED_TAB) { if (!isLiked(it.item_id)) return false; }
+    else if (state.activeSpace !== "全部" && !(it.tags.space||[]).includes(state.activeSpace)) return false;
+    if (state.activeStyles.size){ const ss = it.tags.style||[]; if (![...state.activeStyles].some(s => ss.includes(s))) return false; }
+    return true;
+  }
+
+  /* ============ 网格 ============ */
+  function coverImg(item, cls){
+    const u = mediaUrl(item.cover);
+    return `<img class="${cls}" loading="lazy" src="${esc(u)}" onerror="this.outerHTML='<div class=&quot;cover-ph&quot;>图暂时加载不出</div>'">`;
+  }
+  function makeFeedCard(item){
+    const card = document.createElement("div"); card.className = "card";
+    const styleP = (item.tags.style||[]).slice(0,2).map(s=>`<span class="pill style">${esc(s)}</span>`).join("");
+    const spaceP = (item.tags.space||[]).slice(0,1).map(s=>`<span class="pill">${esc(s)}</span>`).join("");
+    const badges = [];
+    if (item.source_type === "video") badges.push('<span class="badge video">📺 案例 '+item.gallery.length+'图</span>');
+    if (item._explore) badges.push('<span class="badge explore">✨ 探索</span>');
+    const lk = isLiked(item.item_id);
+    card.innerHTML =
+      `<div style="position:relative">${coverImg(item,"cover")}
+        <div class="badges">${badges.join("")}</div>
+        <button class="like-btn ${lk?"on":""}" title="喜欢">♥<span class="lk">${lk?"已喜欢":"喜欢"}</span></button>
+      </div>
+      <div class="body"><div class="title">${esc(item.title)}</div><div class="pills">${styleP}${spaceP}</div></div>`;
+    card.onclick = () => { location.hash = "detail/" + encodeURIComponent(item.item_id); };
+    const lb = card.querySelector(".like-btn");
+    lb.onclick = (e) => { e.stopPropagation(); toggleLike(item); const on = isLiked(item.item_id); lb.classList.toggle("on", on); lb.querySelector(".lk").textContent = on?"已喜欢":"喜欢"; };
+    return card;
+  }
+  function renderGrid(){
+    const grid = document.getElementById("grid"), empty = document.getElementById("empty");
+    grid.innerHTML = "";
+    if (!state.feed.length){ empty.hidden = false; empty.textContent = state.activeSpace===LIKED_TAB ? "还没点过喜欢。在小图右上角点 ♥ 就会收进这里。" : "没有匹配的内容。换个筛选或点「换一批」。"; document.getElementById("count").textContent = "0"; return; }
+    empty.hidden = true;
+    for (const it of state.feed) grid.appendChild(makeFeedCard(it));
+    document.getElementById("count").textContent = state.feed.length + " 个";
+  }
+  function applySort(pool){
+    if (state.sortMode === "new") return pool.slice().sort((a,b)=> (b.ingested_at||"").localeCompare(a.ingested_at||""));
+    if (state.sortMode === "random") return pool.slice().sort(()=> Math.random()-0.5);
+    return buildFeed(pool);
+  }
+  function rebuild(){ const pool = state.items.filter(passFilter); state.feed = applySort(pool); state.imm = state.feed.slice(); renderGrid(); }
+  function reshuffle(){ rebuild(); window.scrollTo({top:0, behavior:"smooth"}); }
+
+  /* ============ 详情 ============ */
+  function openDetail(id){
+    const item = state.byId[id]; if (!item) return;
+    feedback(item, "view"); markSeen(item);
+    const sheet = document.getElementById("sheet"); sheet.className = "sheet";
+    const styleP = (item.tags.style||[]).map(s=>`<span class="pill style">${esc(s)}</span>`).join("");
+    const spaceP = (item.tags.space||[]).map(s=>`<span class="pill">${esc(s)}</span>`).join("");
+    const lk = isLiked(id);
+    const isVideo = item.source_type === "video";
+
+    // 按 gallery 渲染：视频=关键帧带回看；设计本案例=整套实拍多图；360=单图
+    const multi = item.gallery.length > 1;
+    const galHtml = item.gallery.map(g => {
+      const u = mediaUrl(g.img);
+      const dp = (g.design_points||[]).length ? `<ul class="dp">${g.design_points.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>` : "";
+      const cap = g.caption ? `<div class="cap">${esc(g.caption)}${dp}</div>` : (dp?`<div class="cap">${dp}</div>`:"");
+      const back = (isVideo && g.ts!=null && item.video_id) ? `<div class="ts-link" onclick="location.href='study.html?id=${encodeURIComponent(item.video_id)}#t=${Math.round(g.ts)}'">📺 回看片段 ${fmtTs(g.ts)}</div>` : "";
+      return `<div class="gal-item"><img loading="lazy" src="${esc(u)}" onerror="this.style.display='none'">${cap}${back}</div>`;
+    }).join("");
+    let srcBlock = "";
+    if (!isVideo && item.source_url){
+      const label = item.source_type==='shejiben' ? '🔗 看原案例 · 设计本全部照片' : '🔍 查看原图（大图）';
+      const note = (item.license && item.license.note) ? item.license.note : "";
+      srcBlock = `<a class="src-link" href="${esc(item.source_url)}" target="_blank" rel="noopener">${label}</a>${note?`<div class="lic">${esc(note)}</div>`:""}`;
+    }
+    const galHead = multi ? `<h4 class="sec">${isVideo?'视频关键帧':'案例实拍'} · ${item.gallery.length} 张</h4>` : "";
+    const mainHtml = srcBlock + galHead + galHtml;
+
+    // 更多同类（同风格+同空间）——满足"看这类风格的其他照片"
+    const rel = relatedItems(item, 12);
+    const relStyle = (item.tags.style||[])[0] || "同类";
+    const relHtml = rel.length ? `<h4 class="sec">更多「${esc(relStyle)}」风格 · 点开探索</h4><div class="rel-grid">${rel.map(r => {
+        const ru = mediaUrl(r.cover); const rlk = isLiked(r.item_id);
+        return `<div class="rel" onclick="location.hash='detail/'+encodeURIComponent('${esc(r.item_id)}')"><img loading="lazy" src="${esc(ru)}" onerror="this.style.opacity=0.15">
+          <button class="rlike ${rlk?'on':''}" data-rel="${esc(r.item_id)}" title="喜欢">♥</button></div>`;
+      }).join("")}</div>` : "";
+
+    sheet.innerHTML =
+      `<div class="sheet-head"><h2>${esc(item.title)}</h2><button class="close-x" onclick="location.hash='feed'">×</button></div>
+       <div class="pills">${styleP}${spaceP}</div>
+       <button class="like-big ${lk?'on':''}" id="d-like">${lk?'❤ 已喜欢':'♥ 喜欢这个'}</button>
+       ${mainHtml}
+       ${relHtml}`;
+    sheet.querySelector("#d-like").onclick = () => { toggleLike(item); openDetail(id); };
+    sheet.querySelectorAll(".rlike").forEach(btn => { btn.onclick = (e) => { e.stopPropagation(); const r = state.byId[btn.dataset.rel]; if (r){ toggleLike(r); btn.classList.toggle("on", isLiked(r.item_id)); } }; });
+    document.getElementById("overlay").classList.add("show");
+  }
+
+  /* ============ 我的风格画像 ============ */
+  function topPrefs(ns, n){ return Object.entries(prefs[ns]||{}).filter(([,w])=>Math.abs(w)>0.05).sort((a,b)=>b[1]-a[1]).slice(0,n); }
+  function barRows(ns){
+    const rows = topPrefs(ns, 6);
+    if (!rows.length) return `<div class="empty-note">还没学到偏好——多点几个喜欢就有了。</div>`;
+    const maxAbs = Math.max(...rows.map(([,w])=>Math.abs(w)), 1);
+    return rows.map(([t,w]) => `<div class="bar-row"><span>${esc(t)}</span><div class="bar-track"><div class="bar-fill ${w<0?'neg':''}" style="width:${Math.round(Math.abs(w)/maxAbs*100)}%"></div></div><button class="nudge" title="不感兴趣了" onclick="nudgeDown('${ns}','${esc(t)}')">✕</button></div>`).join("");
+  }
+  function recentLikedStyles(){
+    const cnt = {};
+    for (let i=actions.length-1, k=0; i>=0 && k<20; i--){ const a=actions[i]; if (a.action==="like"){ k++; const it=state.byId[a.item_id]; if (it) for (const s of (it.tags.style||[])) cnt[s]=(cnt[s]||0)+1; } }
+    return Object.entries(cnt).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+  }
+  function openProfile(){
+    const sheet = document.getElementById("sheet"); sheet.className = "sheet wide";
+    const topStyle = topPrefs("style",3).filter(([,w])=>w>0).map(x=>x[0]);
+    const recents = recentLikedStyles().slice(0,2);
+    const topSpace = topPrefs("space",2).filter(([,w])=>w>0).map(x=>x[0]);
+    let trend;
+    if (!topStyle.length && !recents.length) trend = "多看多点，我会逐渐学出你的口味，然后主推你喜欢的风格。";
+    else { const blend=[...new Set([...recents,...topStyle])].slice(0,2); trend = `你的口味正在偏向 <b style="color:var(--accent)">${blend.map(esc).join(" / ")}</b>` + (topSpace.length?`，集中在 ${topSpace.map(esc).join("、")}`:"") + "。继续刷，推荐会越来越准。"; }
+    const wall = liked.length ? liked.slice().reverse().slice(0,12).map(f=>`<img loading="lazy" src="${esc(mediaUrl(f.cover))}" title="${esc(f.title)}" onerror="this.style.display='none'">`).join("") : `<div class="empty-note">还没点过喜欢。</div>`;
+    sheet.innerHTML = `<div class="sheet-head"><h2>🎨 我的风格画像</h2><button class="close-x" onclick="location.hash='feed'">×</button></div>
+      <div class="trend">${trend}<div style="color:var(--muted);font-size:11px;margin-top:6px">已学习信号 ${Math.round(signalCount()*10)/10} · 喜欢 ${liked.length} 个</div></div>
+      <h4 class="sec">风格偏好</h4><div class="bars">${barRows("style")}</div>
+      <h4 class="sec">空间偏好</h4><div class="bars">${barRows("space")}</div>
+      <h4 class="sec">你喜欢过的</h4><div class="mini-wall">${wall}</div>
+      <div style="margin-top:20px;display:flex;gap:10px"><button class="btn" onclick="exportLiked()">导出我喜欢的</button><button class="btn" onclick="resetProfile()">重置画像</button></div>`;
+    document.getElementById("overlay").classList.add("show");
+  }
+  function nudgeDown(ns, t){ prefs[ns][t] = Math.min(0, (prefs[ns][t]||0)) - 0.5; savePrefs(); openProfile(); rebuildSoon(); }
+  function exportLiked(){ const blob = new Blob([liked.map(f=>JSON.stringify(f)).join("\n")], {type:"application/x-ndjson"}); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "discover-liked-" + new Date().toISOString().slice(0,10) + ".jsonl"; a.click(); }
+  function resetProfile(){ if (!confirm("清空学到的风格偏好和浏览历史？你「喜欢」的列表会保留。")) return; prefs = { style:{}, space:{}, features:{}, signals:0 }; savePrefs(); seen={}; lsSet(LS.seen,seen); recent=[]; lsSet(LS.recent,recent); actions=[]; lsSet(LS.actions,actions); location.hash="feed"; rebuild(); }
+
+  /* ============ 抖音沉浸 ============ */
+  function enterImmersive(){ if (!state.imm.length) state.imm = state.feed.slice(); state.immIdx = 0; location.hash = "immersive"; }
+  function exitImmersive(){ location.hash = "feed"; }
+  function renderImm(){
+    const item = state.imm[state.immIdx]; if (!item){ exitImmersive(); return; }
+    feedback(item, "view"); markSeen(item);
+    document.getElementById("imm-stage").innerHTML = `<img src="${esc(mediaUrl(item.cover))}" onerror="this.parentElement.innerHTML='<div style=&quot;color:#888&quot;>图暂时加载不出</div>'">`;
+    const styleP = (item.tags.style||[]).map(s=>`<span class="pill style">${esc(s)}</span>`).join("");
+    const cap = item.summary || (item.gallery[0] && item.gallery[0].caption) || "";
+    document.getElementById("imm-info").innerHTML = `<h3>${esc(item.title)}</h3>${cap?`<div class="imm-cap">${esc(cap)}</div>`:""}<div class="pills">${styleP}</div>`;
+    document.getElementById("imm-pos").textContent = (state.immIdx+1) + " / " + state.imm.length;
+    document.getElementById("imm-like").classList.toggle("on", isLiked(item.item_id));
+  }
+  function immLike(){ const item = state.imm[state.immIdx]; if (!item) return; toggleLike(item); document.getElementById("imm-like").classList.toggle("on", isLiked(item.item_id)); }
+  function immNext(){ if (state.immIdx < state.imm.length-1){ state.immIdx++; renderImm(); } else { state.imm = buildFeed(state.items.filter(passFilter)); state.immIdx = 0; renderImm(); } }
+  function immPrev(){ if (state.immIdx>0){ state.immIdx--; renderImm(); } }
+  document.addEventListener("keydown", e => {
+    if (!document.getElementById("immersive").classList.contains("show")) return;
+    if (e.key==="ArrowDown"){ immNext(); e.preventDefault(); } else if (e.key==="ArrowUp"){ immPrev(); e.preventDefault(); }
+    else if (e.key==="ArrowRight"){ immLike(); } else if (e.key==="ArrowLeft"){ immNext(); } else if (e.key==="Escape"){ exitImmersive(); }
+  });
+  let touchY = null;
+  const immEl = document.getElementById("immersive");
+  immEl.addEventListener("touchstart", e => { touchY = e.touches[0].clientY; }, {passive:true});
+  immEl.addEventListener("touchend", e => { if (touchY==null) return; const dy = e.changedTouches[0].clientY - touchY; if (dy < -50) immNext(); else if (dy > 50) immPrev(); touchY=null; });
+  let wheelLock = false;
+  immEl.addEventListener("wheel", e => { if (wheelLock) return; wheelLock = true; setTimeout(()=>wheelLock=false, 450); if (e.deltaY>0) immNext(); else immPrev(); }, {passive:true});
+
+  /* ============ 路由 ============ */
+  let rebuildTimer = null;
+  function rebuildSoon(){ clearTimeout(rebuildTimer); rebuildTimer = setTimeout(rebuild, 50); }
+  function route(){
+    const h = decodeURIComponent(location.hash.slice(1));
+    document.getElementById("overlay").classList.remove("show");
+    document.getElementById("immersive").classList.toggle("show", h === "immersive");
+    if (h.startsWith("detail/")) openDetail(h.slice("detail/".length));
+    else if (h === "profile") openProfile();
+    else if (h === "immersive") renderImm();
+  }
+  window.addEventListener("hashchange", route);
+
+  /* ============ 启动 ============ */
+  document.getElementById("sortseg").querySelectorAll("button").forEach(b => {
+    b.onclick = () => { state.sortMode = b.dataset.sort; document.querySelectorAll("#sortseg button").forEach(x=>x.classList.remove("active")); b.classList.add("active"); rebuild(); };
+  });
+  async function init(){
+    renderTabs(); renderChips();
+    try {
+      const r = await fetch("../data/discover_index.json", { cache: "no-store" });
+      const j = await r.json();
+      state.items = j.items || [];
+      state.byId = Object.fromEntries(state.items.map(it => [it.item_id, it]));
+    } catch (e){ document.getElementById("empty").hidden = false; document.getElementById("empty").textContent = "加载 discover_index.json 失败，先跑 python scripts/build_discover_index.py"; return; }
+    document.getElementById("sub").textContent = "看到喜欢的直接点 ♥，越点越懂你 · " + (signalCount() >= RECO.coldThreshold ? "已经在按你的口味推荐了" : "刚开始，先给你看各种风格，多点几个喜欢我就懂你了");
+    rebuild(); route();
+  }
+  init();
+  </script>
+</body>
+</html>
