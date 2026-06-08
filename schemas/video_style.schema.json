@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/decoration-inspiration/schemas/video_style.schema.json",
+  "title": "VideoStyleAnalysis",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["overall", "frames"],
+  "properties": {
+    "overall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headline", "style_tags", "space_tags"],
+      "properties": {
+        "headline": { "type": "string", "minLength": 1, "description": "一句话总结这个视频的设计方向" },
+        "style_tags": {
+          "type": "array", "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "space_tags": {
+          "type": "array", "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "frames": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ts", "caption", "design_points", "tags"],
+        "properties": {
+          "ts": { "type": "number", "minimum": 0 },
+          "caption": { "type": "string", "minLength": 1 },
+          "design_points": {
+            "type": "array", "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "tags": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["style", "space"],
+            "properties": {
+              "style": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+              "space": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+            }
+          }
+        }
+      }
+    }
+  }
+}

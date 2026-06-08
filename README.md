@@ -1,10 +1,55 @@
 # DecorationInspiration
 
-一个围绕家庭装修早期决策阶段打造的灵感聚合与日报原型仓库。
+围绕家庭装修早期决策阶段的**视频驱动学习与风格库**。
 
-当前版本聚焦在这条最小链路：
+**当前主形态：视频学习 + 风格库**（v0.1，见 `docs/video-knowledge-direction.md`）
 
-`自动采集 -> 内容整理 -> 日报生成 -> 网页浏览 -> 收藏反馈`
+```
+你逛 B 站等地方 → 下好 mp4 丢进 inbox →
+  系统自动: ffmpeg 提帧 + 字幕 + Minimax 分类
+  分两条线：
+    • tutorial → 学习页（outline + 笔记 + MCQ 考核）
+    • style    → 风格库（抽设计帧 + AI 配文）
+```
+
+主入口：`demo/index.html`（旧的 `lookbook.html` / `renovation-daily-demo.html` 保留备查但不是主路径）
+
+最小启动流程：
+
+```powershell
+# 1. 把视频和（可选）同名字幕丢进 inbox
+move D:\Downloads\<视频>.mp4 data\videos\inbox\
+move D:\Downloads\<视频>.srt data\videos\inbox\
+
+# 2. 端到端跑（首次会下 Whisper 模型；有字幕的话跳过 Whisper）
+python scripts/process_inbox.py
+
+# 3. 浏览器打开
+# http://localhost:8008/demo/index.html
+```
+
+详见 `docs/video-knowledge-direction.md`。
+
+最小链路（v0.1）：
+
+```bash
+# 采集真图（360 图搜，覆盖 5 空间，~1000 张）
+python scripts/scrape_inspiration_360.py --output data/raw/inspiration_360.raw.jsonl --per-query 30 --skip-aigc
+
+# 转 candidates
+python scripts/convert_raw_to_candidates.py --input data/raw/inspiration_360.sampled.jsonl --output data/raw/candidates.360.jsonl
+
+# Minimax 打标
+python scripts/prepare_minimax_item_inputs.py --candidates data/raw/candidates.360.jsonl --output data/raw/minimax_item_inputs.360.jsonl
+python scripts/run_item_structuring.py --mode minimax --input data/raw/minimax_item_inputs.360.jsonl --output data/normalized/item_structuring.360.outputs.jsonl --concurrency 6
+
+# 出最终 report
+python scripts/generate_daily_report.py --date 2026-05-30 --input data/raw/candidates.360.jsonl --output data/reports/2026-05-30/report.lookbook.json --structured-items data/normalized/item_structuring.360.outputs.jsonl --limit 200
+
+# 启服务后浏览器打开
+python -m http.server 8008
+# -> http://localhost:8008/demo/lookbook.html?data=../data/reports/2026-05-30/report.lookbook.json
+```
 
 ## 当前内容
 
@@ -32,7 +77,7 @@
 - `data-samples/generated-report.json`
   - 由脚本从原始候选内容生成的日报样例
 - `scripts/generate_report.py`
-  - 原始候选内容转日报 JSON 的脚本骨架
+  - 旧版日报骨架（保留备查，已被 `generate_daily_report.py` 取代）
 - `prompts/`
   - Minimax 的单条结构化和日报汇总 prompt
 - `web/`
@@ -59,9 +104,13 @@
 - `scripts/merge_actions_jsonl.py`
   - 合并/去重/排序多份 actions.jsonl（多电脑协作）
 - `scripts/run_item_structuring.py`
-  - item_structuring 的占位运行器（heuristic；后续替换为 Minimax 实际调用）
+  - item_structuring 运行器，支持 `--mode heuristic`（无依赖兜底）和 `--mode minimax`（真实 API + 并发 + 缓存 + 失败降级）
 - `scripts/run_daily_summary.py`
-  - daily_summary 的占位运行器（heuristic；后续替换为 Minimax 实际调用）
+  - daily_summary 运行器，支持 `--mode heuristic` 和 `--mode minimax`（同上）
+- `scripts/minimax_client.py`
+  - Minimax HTTP client（urllib，无第三方依赖）；读取 `.env` 或环境变量 `MINIMAX_API_KEY/BASE_URL/MODEL`
+- `scripts/_schema_validate.py`
+  - 最小 JSON Schema 校验器，用于校验 Minimax 输出
 
 ## 目标用户场景
 
@@ -151,17 +200,7 @@ npm run dev
 
 ### 日报生成脚本
 
-```bash
-python scripts/generate_report.py
-```
-
-默认输入：
-
-- `data-samples/raw-candidates.json`
-
-默认输出：
-
-- `data-samples/generated-report.json`
+主管线脚本是 `scripts/generate_daily_report.py`（参考下面"本地运行"小节）。`scripts/generate_report.py` 是旧版骨架，仅保留备查。
 
 ## 当前完成状态
 

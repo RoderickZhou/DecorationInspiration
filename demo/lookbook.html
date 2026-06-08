@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>装修视觉灵感库 · Lookbook</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #16181f;
+      --panel-soft: #1c1f28;
+      --text: #f3f5fa;
+      --muted: #8a93a6;
+      --line: rgba(255, 255, 255, 0.08);
+      --accent: #f59e0b;
+      --fit-good: #22c55e;
+      --fit-mid: #94a3b8;
+      --fit-low: #ef4444;
+      --shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(15, 17, 21, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .header-inner {
+      max-width: 1480px; margin: 0 auto;
+      padding: 12px 20px 0;
+    }
+    .brand {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .brand h1 {
+      margin: 0; font-size: 18px; font-weight: 600; letter-spacing: 0.5px;
+    }
+    .brand .subtitle {
+      color: var(--muted); font-size: 13px;
+    }
+    .meta-row {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      color: var(--muted); font-size: 12px;
+      margin: 4px 0 10px;
+    }
+    .meta-row span { white-space: nowrap; }
+    .header-actions {
+      display: flex; gap: 8px;
+    }
+    .btn {
+      background: var(--panel-soft); color: var(--text);
+      border: 1px solid var(--line); border-radius: 999px;
+      padding: 6px 14px; font-size: 13px; cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .btn:hover { background: #252834; }
+    .btn-accent { background: var(--accent); color: #0f1115; font-weight: 600; border-color: var(--accent); }
+    .btn-accent:hover { background: #fbbf24; }
+
+    .filters {
+      max-width: 1480px; margin: 0 auto;
+      padding: 0 20px 12px;
+    }
+    .tab-row {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .tab {
+      padding: 7px 16px; border-radius: 999px;
+      background: transparent; color: var(--muted);
+      border: 1px solid var(--line);
+      cursor: pointer; font-size: 13px;
+      transition: all 0.15s ease;
+    }
+    .tab:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .tab.active {
+      background: var(--text); color: #0f1115;
+      border-color: var(--text); font-weight: 600;
+    }
+    .chip-row {
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .chip {
+      padding: 4px 10px; border-radius: 6px;
+      background: var(--panel-soft); color: var(--muted);
+      border: 1px solid var(--line);
+      cursor: pointer; font-size: 12px;
+      transition: all 0.15s ease;
+    }
+    .chip:hover { color: var(--text); }
+    .chip.active { background: var(--accent); color: #0f1115; border-color: var(--accent); }
+
+    main {
+      max-width: 1480px; margin: 0 auto;
+      padding: 18px 20px 64px;
+    }
+
+    .stats-bar {
+      color: var(--muted); font-size: 13px; margin-bottom: 14px;
+    }
+
+    /* Masonry via CSS columns */
+    .grid {
+      column-count: 4;
+      column-gap: 14px;
+    }
+    @media (max-width: 1200px) { .grid { column-count: 3; } }
+    @media (max-width: 800px)  { .grid { column-count: 2; } }
+    @media (max-width: 480px)  { .grid { column-count: 1; } }
+
+    .card {
+      break-inside: avoid;
+      margin-bottom: 14px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px rgba(0,0,0,0.6);
+    }
+    .card img {
+      width: 100%; display: block;
+      transition: opacity 0.3s ease;
+    }
+    .card .img-wrap {
+      position: relative; background: var(--panel-soft);
+      min-height: 100px;
+    }
+    .badge-fit {
+      position: absolute; top: 8px; left: 8px;
+      padding: 3px 8px; border-radius: 6px;
+      font-size: 11px; font-weight: 600;
+      background: rgba(0,0,0,0.55); color: white;
+      backdrop-filter: blur(6px);
+    }
+    .badge-fit.good { color: var(--fit-good); }
+    .badge-fit.mid  { color: var(--fit-mid);  }
+    .badge-fit.low  { color: var(--fit-low);  }
+
+    .like-btn {
+      position: absolute; top: 8px; right: 8px;
+      width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
+      border: none; color: white; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; line-height: 1;
+      transition: all 0.15s ease;
+    }
+    .like-btn:hover { background: rgba(0,0,0,0.75); transform: scale(1.08); }
+    .like-btn.liked { color: var(--accent); background: rgba(245,158,11,0.18); }
+
+    .card .body {
+      padding: 8px 11px 11px;
+    }
+    .card .title {
+      font-size: 12.5px; line-height: 1.4;
+      color: var(--text);
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card .meta {
+      margin-top: 6px;
+      display: flex; gap: 6px; flex-wrap: wrap;
+      font-size: 10.5px; color: var(--muted);
+    }
+    .tag-pill {
+      padding: 1px 6px; border-radius: 4px;
+      background: rgba(255,255,255,0.06); color: var(--muted);
+    }
+
+    /* Empty / loading */
+    .placeholder {
+      text-align: center; color: var(--muted);
+      padding: 40px 20px;
+    }
+
+    /* Favorites drawer */
+    .drawer-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 100; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: min(440px, 92vw);
+      background: var(--panel); z-index: 101;
+      box-shadow: -12px 0 32px rgba(0,0,0,0.5);
+      transform: translateX(100%); transition: transform 0.25s ease;
+      display: flex; flex-direction: column;
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .drawer-head h2 { margin: 0; font-size: 16px; }
+    .drawer-body {
+      flex: 1; overflow-y: auto; padding: 16px;
+    }
+    .fav-item {
+      display: flex; gap: 12px; margin-bottom: 14px;
+      padding-bottom: 14px; border-bottom: 1px solid var(--line);
+    }
+    .fav-item img {
+      width: 80px; height: 60px; object-fit: cover; border-radius: 8px;
+      background: var(--panel-soft);
+    }
+    .fav-item .info { flex: 1; min-width: 0; font-size: 12.5px; }
+    .fav-item .info a { color: var(--text); text-decoration: none; }
+    .fav-item .info a:hover { color: var(--accent); }
+    .fav-item .info .meta { color: var(--muted); font-size: 11px; margin-top: 4px; }
+    .fav-remove {
+      background: transparent; color: var(--muted);
+      border: none; cursor: pointer; font-size: 16px;
+      align-self: flex-start;
+    }
+    .fav-remove:hover { color: var(--fit-low); }
+
+    .footer-note {
+      max-width: 1480px; margin: 32px auto 0;
+      padding: 12px 20px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted); font-size: 12px; line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div>
+          <h1>装修视觉灵感库</h1>
+          <span class="subtitle">按空间和风格刷真图，看到喜欢的就收下来</span>
+        </div>
+        <div class="header-actions">
+          <button class="btn" id="export-favs">导出收藏</button>
+          <button class="btn btn-accent" id="open-drawer">
+            收藏夹 <span id="fav-count">0</span>
+          </button>
+        </div>
+      </div>
+      <div class="meta-row" id="meta-row"></div>
+    </div>
+    <div class="filters">
+      <div class="tab-row" id="tab-row"></div>
+      <div class="chip-row" id="chip-row"></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="stats-bar" id="stats-bar">正在加载灵感数据…</div>
+    <div class="grid" id="grid"></div>
+    <div class="placeholder" id="empty" hidden>没有匹配的图片，试试切换空间或清空风格筛选。</div>
+    <div class="footer-note" id="footer-note"></div>
+  </main>
+
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <h2>我的收藏 (<span id="drawer-count">0</span>)</h2>
+      <button class="btn" id="close-drawer">关闭</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </aside>
+
+  <script>
+  const FAV_KEY = "renovation_lookbook_favs_v1";
+  const DEFAULT_DATA = "../data/reports/2026-05-30/report.lookbook.json";
+
+  const SPACE_TABS = ["全部", "儿童房", "客厅", "厨房", "收纳", "主卧"];
+  const STYLE_CHIPS = ["原木", "现代简约", "温暖简约", "奶油风", "简约", "侘寂"];
+
+  const state = {
+    items: [],
+    activeSpace: "全部",
+    activeStyles: new Set(),
+    favs: loadFavs(),
+  };
+
+  function loadFavs() {
+    try { return JSON.parse(localStorage.getItem(FAV_KEY) || "[]"); } catch { return []; }
+  }
+  function saveFavs() {
+    localStorage.setItem(FAV_KEY, JSON.stringify(state.favs));
+    document.getElementById("fav-count").textContent = state.favs.length;
+    document.getElementById("drawer-count").textContent = state.favs.length;
+  }
+
+  function fitClass(score) {
+    if (score >= 0.55) return "good";
+    if (score >= 0.35) return "mid";
+    return "low";
+  }
+
+  function fitLabel(score) {
+    return "适配 " + Number(score).toFixed(2);
+  }
+
+  function cardMatchesFilter(item) {
+    if (state.activeSpace !== "全部") {
+      const spaces = (item.tags && item.tags.space) || [];
+      if (!spaces.includes(state.activeSpace)) return false;
+    }
+    if (state.activeStyles.size > 0) {
+      const styles = (item.tags && item.tags.style) || [];
+      const hasMatch = styles.some(s => state.activeStyles.has(s));
+      if (!hasMatch) return false;
+    }
+    return true;
+  }
+
+  function renderTabs() {
+    const row = document.getElementById("tab-row");
+    row.innerHTML = "";
+    SPACE_TABS.forEach(s => {
+      const el = document.createElement("button");
+      el.className = "tab" + (s === state.activeSpace ? " active" : "");
+      el.textContent = s;
+      el.onclick = () => { state.activeSpace = s; renderTabs(); renderGrid(); };
+      row.appendChild(el);
+    });
+  }
+
+  function renderChips() {
+    const row = document.getElementById("chip-row");
+    row.innerHTML = "";
+    STYLE_CHIPS.forEach(s => {
+      const el = document.createElement("button");
+      el.className = "chip" + (state.activeStyles.has(s) ? " active" : "");
+      el.textContent = s;
+      el.onclick = () => {
+        if (state.activeStyles.has(s)) state.activeStyles.delete(s);
+        else state.activeStyles.add(s);
+        renderChips();
+        renderGrid();
+      };
+      row.appendChild(el);
+    });
+    if (state.activeStyles.size > 0) {
+      const clr = document.createElement("button");
+      clr.className = "chip";
+      clr.textContent = "清空风格";
+      clr.style.opacity = "0.7";
+      clr.onclick = () => { state.activeStyles.clear(); renderChips(); renderGrid(); };
+      row.appendChild(clr);
+    }
+  }
+
+  function isFav(item) {
+    return state.favs.some(f => f.id === item.id);
+  }
+
+  function toggleFav(item) {
+    if (isFav(item)) {
+      state.favs = state.favs.filter(f => f.id !== item.id);
+    } else {
+      state.favs.unshift({
+        id: item.id,
+        title: item.title,
+        cover_url: item.cover_url,
+        source_url: item.source_url,
+        platform: item.platform,
+        fit_score: item.fit_score,
+        tags: item.tags,
+        favored_at: new Date().toISOString(),
+      });
+    }
+    saveFavs();
+  }
+
+  function renderGrid() {
+    const grid = document.getElementById("grid");
+    const empty = document.getElementById("empty");
+    const stats = document.getElementById("stats-bar");
+
+    const filtered = state.items
+      .filter(cardMatchesFilter)
+      .sort((a, b) => (b.fit_score || 0) - (a.fit_score || 0));
+
+    grid.innerHTML = "";
+    if (filtered.length === 0) {
+      empty.hidden = false;
+      stats.textContent = "0 张图";
+      return;
+    }
+    empty.hidden = true;
+
+    const parts = [];
+    parts.push(`${filtered.length} 张图`);
+    if (state.activeSpace !== "全部") parts.push(`空间: ${state.activeSpace}`);
+    if (state.activeStyles.size > 0) parts.push(`风格: ${Array.from(state.activeStyles).join(" / ")}`);
+    stats.textContent = parts.join(" · ") + " · 按适配度从高到低排";
+
+    const fragment = document.createDocumentFragment();
+    for (const item of filtered) {
+      fragment.appendChild(makeCard(item));
+    }
+    grid.appendChild(fragment);
+  }
+
+  function makeCard(item) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.onclick = (e) => {
+      if (e.target.closest(".like-btn")) return;
+      if (item.source_url) window.open(item.source_url, "_blank", "noopener");
+    };
+
+    const imgWrap = document.createElement("div");
+    imgWrap.className = "img-wrap";
+
+    const img = document.createElement("img");
+    img.loading = "lazy";
+    img.src = item.cover_url || "";
+    img.alt = item.title || "";
+    img.onerror = () => { img.style.display = "none"; };
+    imgWrap.appendChild(img);
+
+    const fit = item.fit_score || 0;
+    const fitBadge = document.createElement("div");
+    fitBadge.className = "badge-fit " + fitClass(fit);
+    fitBadge.textContent = fitLabel(fit);
+    imgWrap.appendChild(fitBadge);
+
+    const likeBtn = document.createElement("button");
+    likeBtn.className = "like-btn" + (isFav(item) ? " liked" : "");
+    likeBtn.title = "收藏";
+    likeBtn.innerHTML = isFav(item) ? "♥" : "♡";
+    likeBtn.onclick = (e) => {
+      e.stopPropagation();
+      toggleFav(item);
+      likeBtn.classList.toggle("liked");
+      likeBtn.innerHTML = isFav(item) ? "♥" : "♡";
+      renderDrawer();
+    };
+    imgWrap.appendChild(likeBtn);
+
+    card.appendChild(imgWrap);
+
+    const body = document.createElement("div");
+    body.className = "body";
+
+    const title = document.createElement("div");
+    title.className = "title";
+    title.textContent = item.title || "(无标题)";
+    body.appendChild(title);
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    const tags = (item.tags && item.tags.style) || [];
+    const space = (item.tags && item.tags.space) || [];
+    for (const t of [...space.slice(0,1), ...tags.slice(0,2)]) {
+      const pill = document.createElement("span");
+      pill.className = "tag-pill";
+      pill.textContent = t;
+      meta.appendChild(pill);
+    }
+    body.appendChild(meta);
+
+    card.appendChild(body);
+    return card;
+  }
+
+  function renderDrawer() {
+    const body = document.getElementById("drawer-body");
+    body.innerHTML = "";
+    if (state.favs.length === 0) {
+      body.innerHTML = '<div class="placeholder">还没有收藏 · 点图片上的 ♡ 试试</div>';
+      return;
+    }
+    for (const f of state.favs) {
+      const row = document.createElement("div");
+      row.className = "fav-item";
+      const img = document.createElement("img");
+      img.src = f.cover_url;
+      img.onerror = () => img.style.opacity = "0";
+      row.appendChild(img);
+
+      const info = document.createElement("div");
+      info.className = "info";
+      const a = document.createElement("a");
+      a.href = f.source_url || f.cover_url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = f.title || "(无标题)";
+      info.appendChild(a);
+      const m = document.createElement("div");
+      m.className = "meta";
+      m.textContent = `${f.platform || ""} · 适配 ${Number(f.fit_score||0).toFixed(2)}`;
+      info.appendChild(m);
+      row.appendChild(info);
+
+      const rm = document.createElement("button");
+      rm.className = "fav-remove";
+      rm.title = "移除";
+      rm.textContent = "×";
+      rm.onclick = () => {
+        state.favs = state.favs.filter(x => x.id !== f.id);
+        saveFavs();
+        renderDrawer();
+        renderGrid();
+      };
+      row.appendChild(rm);
+      body.appendChild(row);
+    }
+  }
+
+  function openDrawer(open) {
+    document.getElementById("drawer").classList.toggle("open", open);
+    document.getElementById("drawer-overlay").classList.toggle("open", open);
+  }
+
+  function exportFavs() {
+    if (state.favs.length === 0) {
+      alert("收藏夹是空的");
+      return;
+    }
+    const lines = state.favs.map(f => JSON.stringify(f)).join("\n");
+    const blob = new Blob([lines], { type: "application/x-ndjson" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `lookbook-favs-${new Date().toISOString().slice(0,10)}.jsonl`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function renderMeta(report) {
+    const row = document.getElementById("meta-row");
+    const items = report.items || [];
+    const stats = report.source_stats || {};
+    row.innerHTML = "";
+    const bits = [
+      `${items.length} 张图`,
+      `生成 ${report.report_date || ""}`,
+      `源 ${(stats.source_breakdown || []).length || 1} 平台`,
+    ];
+    for (const b of bits) {
+      const s = document.createElement("span");
+      s.textContent = b;
+      row.appendChild(s);
+    }
+
+    const note = document.getElementById("footer-note");
+    const prof = report.user_profile_snapshot || {};
+    note.innerHTML = `按你家画像（${prof.house_area_net_sqm || "-"}㎡到手 · ${prof.layout_preference || "-"} · 二孩 · 长期自住）排序。<br/>
+      绿色徽标 = 高适配，灰色 = 一般，红色 = 风格/场景偏离。点图卡跳到原页面 / 点 ♡ 加入跨平台收藏。`;
+  }
+
+  async function init() {
+    const params = new URLSearchParams(location.search);
+    const dataUrl = params.get("data") || DEFAULT_DATA;
+
+    try {
+      const resp = await fetch(dataUrl, { cache: "no-store" });
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+      const report = await resp.json();
+      state.items = report.items || [];
+      renderMeta(report);
+    } catch (e) {
+      document.getElementById("stats-bar").textContent = "加载失败：" + e.message + " — 请通过本地 http 服务打开页面";
+      return;
+    }
+
+    document.getElementById("fav-count").textContent = state.favs.length;
+    document.getElementById("drawer-count").textContent = state.favs.length;
+
+    document.getElementById("open-drawer").onclick = () => { renderDrawer(); openDrawer(true); };
+    document.getElementById("close-drawer").onclick = () => openDrawer(false);
+    document.getElementById("drawer-overlay").onclick = () => openDrawer(false);
+    document.getElementById("export-favs").onclick = exportFavs;
+
+    renderTabs();
+    renderChips();
+    renderGrid();
+  }
+
+  init();
+  </script>
+</body>
+</html>

@@ -128,6 +128,39 @@ python scripts/run_daily_summary.py --mode heuristic --input data/raw/minimax_da
 }
 ```
 
+## 2.5) 真实 Minimax 模式运行方式
+
+设置环境变量（项目根目录可放 `.env`，已被 gitignore）：
+
+```text
+MINIMAX_API_KEY=<your-key>
+MINIMAX_BASE_URL=https://api.minimax.io/v1     # 国内版改为 https://api.minimaxi.com/v1
+MINIMAX_MODEL=MiniMax-Text-01                  # 也可换 abab6.5s-chat 等
+```
+
+PowerShell 临时注入：
+
+```powershell
+$env:MINIMAX_API_KEY = "<key>"
+$env:MINIMAX_BASE_URL = "https://api.minimax.io/v1"
+$env:MINIMAX_MODEL = "MiniMax-Text-01"
+```
+
+真实模式运行：
+
+```bash
+python scripts/run_item_structuring.py --mode minimax --input data/raw/minimax_item_inputs.jsonl --output data/normalized/item_structuring.outputs.jsonl --concurrency 4
+python scripts/run_daily_summary.py --mode minimax --input data/raw/minimax_daily_summary_input.json --output data/normalized/daily_summary.output.json
+```
+
+行为说明：
+
+- 默认对每条 item 走本地缓存（`data/cache/item_structuring/<sha>.json`），重复跑同样输入会跳过 API
+- `--force-refresh` 清除缓存重新跑
+- `--cache-dir ""` 关闭缓存
+- 如果 `MINIMAX_API_KEY` 未设置，或 API 错误，或模型输出不符合 schema，会**自动降级到 heuristic** 并在 stderr 打 warning；行内会附 `_source` 和 `_fallback_reason` 字段方便排查
+- `--fail-fast`：调试时关掉降级，让错误直接抛出
+
 ## 3) 与 report.json 的关系
 
 最终 `report.json` 的字段来源建议如下：

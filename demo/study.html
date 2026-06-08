@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>装修学习页</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #16181f;
+      --panel-soft: #1c1f28;
+      --text: #f3f5fa;
+      --muted: #8a93a6;
+      --line: rgba(255,255,255,0.08);
+      --accent: #f59e0b;
+      --green: #22c55e;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --shadow: 0 12px 24px rgba(0,0,0,0.45);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: "PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+      background: var(--bg); color: var(--text);
+    }
+    .wrap { max-width: 1480px; margin: 0 auto; padding: 18px 24px 50px; }
+    header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 16px;
+    }
+    header h1 { margin: 0; font-size: 18px; }
+    header .nav a { color: var(--muted); text-decoration: none; margin-right: 14px; font-size: 13px; }
+    header .nav a:hover { color: var(--text); }
+
+    .top-row {
+      display: grid; grid-template-columns: 1fr 360px; gap: 20px;
+    }
+    @media (max-width: 1000px) { .top-row { grid-template-columns: 1fr; } }
+
+    video {
+      width: 100%; max-height: 540px; border-radius: 12px;
+      background: black;
+    }
+    video::cue { background: rgba(0,0,0,0.7); color: white; font-size: 16px; }
+
+    .outline-panel {
+      background: var(--panel); border-radius: 12px;
+      max-height: 540px; overflow-y: auto;
+      padding: 14px; border: 1px solid var(--line);
+    }
+    .outline-panel h3 { margin: 0 0 10px; font-size: 14px; color: var(--muted); }
+    .outline-item {
+      padding: 8px 10px; border-radius: 8px; cursor: pointer;
+      transition: background 0.15s ease;
+      border-left: 3px solid transparent;
+      margin-bottom: 4px;
+    }
+    .outline-item:hover { background: var(--panel-soft); }
+    .outline-item.active {
+      background: rgba(245,158,11,0.1);
+      border-left-color: var(--accent);
+    }
+    .outline-item .ts {
+      color: var(--accent); font-size: 11px; font-weight: 600;
+      font-family: monospace; margin-right: 8px;
+    }
+    .outline-item .title { font-size: 13px; line-height: 1.4; }
+    .outline-item .points {
+      font-size: 11.5px; color: var(--muted); margin-top: 4px;
+      line-height: 1.5; display: none;
+    }
+    .outline-item.active .points { display: block; }
+    .outline-item .points li { margin-left: -10px; }
+
+    .tabs {
+      display: flex; gap: 6px; margin-top: 24px; margin-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .tab {
+      padding: 10px 18px; background: transparent; border: none;
+      color: var(--muted); cursor: pointer; font-size: 14px;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: all 0.15s ease;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .notes {
+      background: var(--panel); border-radius: 12px;
+      padding: 22px 28px; line-height: 1.75; font-size: 14.5px;
+      border: 1px solid var(--line);
+    }
+    .notes h2 { font-size: 18px; margin-top: 22px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+    .notes h2:first-child { margin-top: 0; }
+    .notes h3 { font-size: 14px; color: var(--accent); margin: 16px 0 8px; }
+    .notes ul { padding-left: 22px; }
+    .notes li { margin: 4px 0; }
+    .notes strong { color: var(--accent); }
+    .notes blockquote {
+      border-left: 3px solid var(--red); background: rgba(239,68,68,0.06);
+      padding: 8px 14px; margin: 12px 0; border-radius: 6px;
+      color: #fcd6d6;
+    }
+    .notes code { background: var(--panel-soft); padding: 1px 5px; border-radius: 3px; font-size: 13px; }
+    .notes .chapter-strip {
+      display: grid; gap: 8px; margin: 10px 0 14px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+    .notes .chapter-strip .thumb {
+      position: relative; aspect-ratio: 16/10; border-radius: 8px; overflow: hidden;
+      cursor: pointer; border: 1px solid var(--line);
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .notes .chapter-strip .thumb:hover {
+      transform: translateY(-2px); border-color: rgba(245,158,11,0.4);
+    }
+    .notes .chapter-strip .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .notes .chapter-strip .thumb .ts-badge {
+      position: absolute; bottom: 6px; left: 6px;
+      background: rgba(0,0,0,0.7); color: var(--accent);
+      font-family: monospace; font-size: 11px; font-weight: 600;
+      padding: 2px 6px; border-radius: 4px;
+    }
+    .notes li.ts-link {
+      cursor: pointer; border-left: 2px solid transparent;
+      padding: 2px 0 2px 10px; margin-left: -12px;
+      transition: background 0.15s ease, border-color 0.15s ease;
+      border-radius: 0 4px 4px 0;
+    }
+    .notes li.ts-link:hover {
+      border-left-color: var(--accent);
+      background: rgba(245,158,11,0.06);
+    }
+    .notes li.ts-link .ts-tag {
+      color: var(--accent); opacity: 0.55; font-family: monospace; font-size: 11px;
+      margin-left: 6px; font-weight: 600;
+    }
+    .notes li.ts-link:hover .ts-tag { opacity: 1; }
+    .quiz-q.clickable { cursor: pointer; transition: color 0.15s ease; }
+    .quiz-q.clickable:hover { color: var(--accent); }
+    .quiz-q .ts-tag {
+      color: var(--accent); font-family: monospace; font-size: 12px;
+      font-weight: 600; margin-left: 8px;
+    }
+    #debug-info {
+      font-size: 11px; color: var(--muted);
+      padding: 6px 12px; margin-bottom: 10px;
+      background: var(--panel-soft); border-radius: 6px;
+      border: 1px solid var(--line);
+      font-family: monospace;
+    }
+    #debug-info.ok { border-color: rgba(34,197,94,0.4); color: #a7e8a7; }
+    #debug-info.warn { border-color: rgba(239,68,68,0.4); color: #fcd6d6; }
+    .outline-item.flash { background: rgba(245,158,11,0.25) !important; }
+
+    /* 画中画悬浮播放器 */
+    #video-wrap { position: relative; }
+    #floating-header { display: none; }
+    #video-placeholder { display: none; }
+
+    #video-wrap.floating {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      width: 720px; max-width: 70vw; height: auto;
+      z-index: 998;
+      background: black;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.12);
+      animation: floatingIn 0.25s ease;
+    }
+    #video-wrap.floating video {
+      width: 100%; max-height: none; height: auto;
+      aspect-ratio: 16/9; object-fit: contain;
+      border-radius: 0; display: block;
+    }
+    #video-wrap.floating #floating-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 8px 6px 12px;
+      background: rgba(0,0,0,0.85);
+      cursor: pointer; font-size: 12px;
+      color: var(--text);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    #video-wrap.floating #floating-title {
+      flex: 1; overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap;
+      margin-right: 8px;
+    }
+    #video-wrap.floating #floating-close {
+      background: transparent; color: var(--muted);
+      border: none; cursor: pointer;
+      font-size: 20px; line-height: 1; padding: 2px 8px;
+      border-radius: 4px;
+    }
+    #video-wrap.floating #floating-close:hover {
+      color: var(--text); background: rgba(255,255,255,0.1);
+    }
+    /* video 浮起时，原占位维持页面高度，避免抖动 */
+    #video-wrap.floating ~ #video-placeholder {
+      display: flex;
+      width: 100%;
+      /* 高度由 JS 在浮起前精确写入（= wrap 原始高度），避免布局跳动 */
+      background: var(--panel-soft);
+      border-radius: 12px;
+      border: 1px dashed var(--line);
+      align-items: center; justify-content: center;
+      color: var(--muted); font-size: 13px;
+    }
+    @keyframes floatingIn {
+      from { transform: translateY(20px) scale(0.92); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    @media (max-width: 720px) {
+      #video-wrap.floating {
+        width: 70vw;
+        bottom: 16px; right: 16px;
+      }
+    }
+
+    .quiz {
+      background: var(--panel); border-radius: 12px; padding: 24px;
+      border: 1px solid var(--line);
+    }
+    .quiz-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 18px;
+    }
+    .quiz-progress { color: var(--muted); font-size: 13px; }
+    .quiz-score { font-weight: 600; font-size: 15px; }
+    .quiz-q { font-size: 16px; margin: 0 0 18px; line-height: 1.5; }
+    .quiz-topic { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+    .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-option {
+      padding: 12px 16px; border-radius: 10px;
+      background: var(--panel-soft); border: 1px solid var(--line);
+      cursor: pointer; text-align: left; font-size: 14px;
+      color: var(--text); transition: all 0.15s ease;
+    }
+    .quiz-option:hover:not(:disabled) { background: #252834; border-color: rgba(255,255,255,0.15); }
+    .quiz-option.correct { background: rgba(34,197,94,0.16); border-color: var(--green); color: #d6fdd6; }
+    .quiz-option.wrong { background: rgba(239,68,68,0.16); border-color: var(--red); color: #fcd6d6; }
+    .quiz-option:disabled { cursor: default; }
+    .quiz-feedback {
+      margin-top: 16px; padding: 14px 16px; border-radius: 10px;
+      background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25);
+      font-size: 13.5px; line-height: 1.6;
+      display: none;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback strong { color: var(--accent); }
+    .quiz-controls {
+      display: flex; gap: 10px; margin-top: 16px;
+    }
+    .btn {
+      background: var(--panel-soft); color: var(--text);
+      border: 1px solid var(--line); border-radius: 8px;
+      padding: 8px 16px; font-size: 13px; cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .btn:hover { background: #252834; }
+    .btn-primary { background: var(--accent); color: #0f1115; font-weight: 600; border-color: var(--accent); }
+    .btn-primary:hover { background: #fbbf24; }
+
+    .frames-grid {
+      display: grid; gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+    .frame-card {
+      background: var(--panel); border-radius: 10px; overflow: hidden;
+      border: 1px solid var(--line); cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .frame-card:hover { transform: translateY(-2px); }
+    .frame-card img { width: 100%; display: block; aspect-ratio: 16/10; object-fit: cover; }
+    .frame-card .meta { padding: 8px 10px; font-size: 11px; color: var(--muted); }
+    .frame-card .meta .ts { color: var(--accent); font-family: monospace; }
+
+    .placeholder { text-align: center; padding: 50px 20px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1 id="page-title">学习页</h1>
+      <div class="nav">
+        <a href="index.html">← 主页</a>
+        <a href="style.html">🎨 风格库</a>
+      </div>
+    </header>
+
+    <div id="debug-info">加载中…</div>
+
+    <div class="top-row">
+      <div>
+        <div id="video-wrap">
+          <div id="floating-header">
+            <span id="floating-title">视频</span>
+            <button id="floating-close" type="button" title="关闭悬浮窗（视频不会暂停）">×</button>
+          </div>
+          <video id="video" controls preload="metadata">
+            <source id="video-src" type="video/mp4">
+            <track id="video-track" kind="subtitles" srclang="zh" label="中文" default>
+            浏览器不支持 video 标签
+          </video>
+        </div>
+        <div id="video-placeholder">视频已悬浮到右下角 · 滚回顶部或关闭悬浮窗以恢复</div>
+      </div>
+      <div class="outline-panel">
+        <h3>章节大纲</h3>
+        <div id="outline"></div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="notes">📝 笔记</button>
+      <button class="tab" data-tab="quiz">📝 考考你</button>
+      <button class="tab" data-tab="frames">🖼️ 关键截图</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-notes">
+      <div class="notes" id="notes">加载中…</div>
+    </div>
+
+    <div class="tab-panel" id="tab-quiz">
+      <div class="quiz" id="quiz-container">加载中…</div>
+    </div>
+
+    <div class="tab-panel" id="tab-frames">
+      <div class="frames-grid" id="frames"></div>
+      <div class="placeholder" id="frames-empty" hidden>该视频没有抽取关键帧</div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const videoId = params.get("id");
+    if (!videoId) {
+      document.body.innerHTML = '<div style="padding:40px;text-align:center">URL 缺少 ?id=&lt;video_id&gt;</div>';
+      throw new Error("missing id");
+    }
+
+    const state = {
+      videoId,
+      meta: null,
+      outline: null,
+      quiz: null,
+      framesManifest: null,
+      quizIdx: 0,
+      quizScore: 0,
+      quizAnswered: {},
+    };
+
+    const QUIZ_KEY = "study_quiz_state_" + videoId;
+
+    function loadQuizState() {
+      try {
+        const s = JSON.parse(localStorage.getItem(QUIZ_KEY) || "{}");
+        if (s) {
+          state.quizIdx = s.quizIdx || 0;
+          state.quizScore = s.quizScore || 0;
+          state.quizAnswered = s.quizAnswered || {};
+        }
+      } catch {}
+    }
+    function saveQuizState() {
+      localStorage.setItem(QUIZ_KEY, JSON.stringify({
+        quizIdx: state.quizIdx,
+        quizScore: state.quizScore,
+        quizAnswered: state.quizAnswered,
+      }));
+    }
+
+    function fmtTs(s) {
+      s = Math.round(s || 0);
+      const m = Math.floor(s / 60), ss = s % 60;
+      return `${m}:${String(ss).padStart(2,"0")}`;
+    }
+
+    function setVideoTime(t) {
+      const v = document.getElementById("video");
+      const dur = v.duration || (state.meta && state.meta.duration_s) || 0;
+      // outline ts 偶尔会被模型 hallucinate 超出视频长度，clamp 到末尾前 1 秒
+      const safe = dur > 0 ? Math.min(Math.max(0, t), Math.max(0, dur - 1)) : Math.max(0, t);
+      v.currentTime = safe;
+      v.play().catch(() => {});
+    }
+
+    function normalizeTitle(s) {
+      return String(s || "").replace(/[\s　，。、！？：；「」『』（）()【】\[\]·:!?,.;"'`]/g, "").toLowerCase();
+    }
+
+    function framesForChapter(chIdx) {
+      const chs = (state.outline && state.outline.chapters) || [];
+      const frames = state.framesManifest || [];
+      const dur = (state.meta && state.meta.duration_s) || (chs[chs.length - 1] && chs[chs.length - 1].ts + 30) || 1e9;
+      if (!chs.length || !frames.length || chIdx < 0 || chIdx >= chs.length) return [];
+      const start = chs[chIdx].ts || 0;
+      const end = chIdx + 1 < chs.length ? (chs[chIdx + 1].ts || dur) : dur;
+      const inRange = frames.filter(f => f.ts >= start && f.ts < end);
+      if (inRange.length === 0) {
+        // 该章节无帧（如章节 ts 越界）：fallback 取最接近 start 的一张
+        let best = null, bestGap = Infinity;
+        for (const f of frames) {
+          const gap = Math.abs(f.ts - start);
+          if (gap < bestGap) { bestGap = gap; best = f; }
+        }
+        return best ? [best] : [];
+      }
+      // 最多取 4 张，且均匀采样
+      if (inRange.length <= 4) return inRange;
+      const step = (inRange.length - 1) / 3;
+      return [0, 1, 2, 3].map(i => inRange[Math.round(i * step)]);
+    }
+
+    function chapterStripHtml(chIdx) {
+      const frames = framesForChapter(chIdx);
+      if (!frames.length) return "";
+      const items = frames.map(f =>
+        `<div class="thumb" onclick="seekVideo(${f.ts})">
+           <img loading="lazy" src="../data/videos/${encodeURIComponent(state.videoId)}/frames/${f.path}">
+           <div class="ts-badge">${fmtTs(f.ts)}</div>
+         </div>`
+      ).join("");
+      return `<div class="chapter-strip">${items}</div>`;
+    }
+
+    function renderOutline() {
+      const box = document.getElementById("outline");
+      box.innerHTML = "";
+      if (!state.outline || !state.outline.chapters) {
+        box.innerHTML = '<div style="color:var(--muted);font-size:12px">该视频没有章节大纲（可能是 style 类或分析失败）</div>';
+        return;
+      }
+      const dur = (state.meta && state.meta.duration_s) || 0;
+      state.outline.chapters.forEach((ch, i) => {
+        const item = document.createElement("div");
+        item.className = "outline-item";
+        item.dataset.idx = i;
+        item.dataset.ts = ch.ts;
+        const overrun = dur > 0 && ch.ts > dur;
+
+        const head = document.createElement("div");
+        const overrunTag = overrun ? ` <span style="color:#ef4444;font-size:10px">⚠ 超出视频长度</span>` : "";
+        head.innerHTML = `<span class="ts">${fmtTs(ch.ts)}</span><span class="title">${escapeHtml(ch.title)}</span>${overrunTag}`;
+        item.appendChild(head);
+
+        const points = document.createElement("ul");
+        points.className = "points";
+        for (const p of ch.key_points || []) {
+          const li = document.createElement("li");
+          li.textContent = p;
+          points.appendChild(li);
+        }
+        item.appendChild(points);
+
+        item.onclick = () => {
+          setVideoTime(ch.ts);
+          item.classList.add("flash");
+          setTimeout(() => item.classList.remove("flash"), 350);
+        };
+        box.appendChild(item);
+      });
+    }
+
+    function setupFloatingPlayer() {
+      const v = document.getElementById("video");
+      const wrap = document.getElementById("video-wrap");
+      const placeholder = document.getElementById("video-placeholder");
+      const closeBtn = document.getElementById("floating-close");
+      const headerBar = document.getElementById("floating-header");
+      if (!v || !wrap || !placeholder || !closeBtn || !headerBar) return;
+
+      let userClosed = false;
+      // 缓存 wrap 在"非浮起态"下的绝对位置；浮起后不刷新，让判定永远基于原视频应在的位置
+      let origTop = 0, origHeight = 0;
+
+      function refreshOriginalPosition() {
+        if (wrap.classList.contains("floating")) return;
+        const rect = wrap.getBoundingClientRect();
+        if (rect.height <= 0) return;
+        origTop = rect.top + window.scrollY;
+        origHeight = rect.height;
+        // 把 placeholder 高度精确写成 wrap 原高度，浮起时不抖布局
+        placeholder.style.height = origHeight + "px";
+      }
+
+      function check() {
+        if (origHeight === 0) return;
+        const origBottom = origTop + origHeight;
+        const vpTop = window.scrollY;
+        const vpBottom = vpTop + window.innerHeight;
+        // 原视频区域至少 60px 在视口 = 算作可见
+        const visiblePixels = Math.min(origBottom, vpBottom) - Math.max(origTop, vpTop);
+        const visible = visiblePixels >= 60;
+
+        if (visible && wrap.classList.contains("floating")) {
+          wrap.classList.remove("floating");
+          userClosed = false;
+        } else if (!visible && !userClosed && !wrap.classList.contains("floating")) {
+          wrap.classList.add("floating");
+        }
+      }
+
+      let ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => { check(); ticking = false; });
+      }
+
+      closeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        wrap.classList.remove("floating");
+        userClosed = true;
+      });
+      headerBar.addEventListener("click", (e) => {
+        if (e.target === closeBtn) return;
+        window.scrollTo({ top: Math.max(0, origTop - 60), behavior: "smooth" });
+      });
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", () => { refreshOriginalPosition(); check(); });
+      v.addEventListener("loadedmetadata", () => { refreshOriginalPosition(); check(); });
+
+      refreshOriginalPosition();
+      check();
+    }
+
+    function updateDebugInfo() {
+      const el = document.getElementById("debug-info");
+      if (!el) return;
+      const chN = (state.outline && state.outline.chapters || []).length;
+      const frN = (state.framesManifest || []).length;
+      const qN = (state.quiz && state.quiz.questions || []).length;
+      const dur = (state.meta && state.meta.duration_s) || 0;
+      const overrunChs = (state.outline && state.outline.chapters || []).filter(c => c.ts > dur).length;
+      const parts = [
+        `视频 ${fmtTs(dur)}`,
+        `章节 ${chN}` + (overrunChs ? ` (${overrunChs}个时长越界)` : ""),
+        `关键帧 ${frN}`,
+        `测验题 ${qN}`,
+      ];
+      el.textContent = parts.join(" · ");
+      if (chN > 0 && frN > 0 && qN > 0 && overrunChs === 0) el.classList.add("ok");
+      else if (chN === 0 || frN === 0) el.classList.add("warn");
+    }
+
+    function highlightOutline(t) {
+      if (!state.outline || !state.outline.chapters) return;
+      const chs = state.outline.chapters;
+      let activeIdx = 0;
+      for (let i = 0; i < chs.length; i++) {
+        if (chs[i].ts <= t) activeIdx = i;
+        else break;
+      }
+      document.querySelectorAll(".outline-item").forEach((el, i) => {
+        el.classList.toggle("active", i === activeIdx);
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+    }
+
+    function renderMarkdown(md) {
+      if (!md) return "(无笔记)";
+      const chs = (state.outline && state.outline.chapters) || [];
+      const normChapters = chs.map(ch => normalizeTitle(ch.title));
+      const lines = md.split(/\r?\n/);
+      const out = [];
+      let i = 0, inList = false, inBq = false;
+      let currentChIdx = -1;
+      function closeList() { if (inList) { out.push("</ul>"); inList = false; } }
+      function closeBq() { if (inBq) { out.push("</blockquote>"); inBq = false; } }
+      while (i < lines.length) {
+        let line = lines[i];
+        if (/^##\s+/.test(line)) {
+          closeList(); closeBq();
+          const title = line.replace(/^##\s+/, "");
+          const normTitle = normalizeTitle(title);
+          const chIdx = normChapters.findIndex(n => n && (n === normTitle || n.includes(normTitle) || normTitle.includes(n)));
+          currentChIdx = chIdx;
+          if (chIdx >= 0) {
+            const ts = chs[chIdx].ts;
+            out.push(`<h2 style="cursor:pointer" onclick="seekVideo(${ts})" title="跳到 ${fmtTs(ts)} 重看">${inline(title)} <span style="color:var(--accent);font-size:12px;font-family:monospace;font-weight:400">▶ ${fmtTs(ts)}</span></h2>`);
+            const strip = chapterStripHtml(chIdx);
+            if (strip) out.push(strip);
+          } else {
+            out.push(`<h2>${inline(title)}</h2>`);
+          }
+        } else if (/^###\s+/.test(line)) {
+          closeList(); closeBq();
+          out.push(`<h3>${inline(line.replace(/^###\s+/, ""))}</h3>`);
+        } else if (/^>\s?/.test(line)) {
+          closeList();
+          if (!inBq) { out.push("<blockquote>"); inBq = true; }
+          out.push(`<p>${inline(line.replace(/^>\s?/, ""))}</p>`);
+        } else if (/^[-*]\s+/.test(line)) {
+          closeBq();
+          if (!inList) { out.push("<ul>"); inList = true; }
+          const content = inline(line.replace(/^[-*]\s+/, ""));
+          if (currentChIdx >= 0) {
+            const ts = chs[currentChIdx].ts;
+            out.push(`<li class="ts-link" onclick="seekVideo(${ts})" title="点击跳到 ${fmtTs(ts)} 重看这一段">${content}<span class="ts-tag">▶ ${fmtTs(ts)}</span></li>`);
+          } else {
+            out.push(`<li>${content}</li>`);
+          }
+        } else if (line.trim() === "") {
+          closeList(); closeBq();
+        } else {
+          closeList(); closeBq();
+          out.push(`<p>${inline(line)}</p>`);
+        }
+        i++;
+      }
+      closeList(); closeBq();
+      return out.join("\n");
+
+      function inline(s) {
+        s = escapeHtml(s);
+        s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+        return s;
+      }
+    }
+
+    function renderQuiz() {
+      const c = document.getElementById("quiz-container");
+      if (!state.quiz || !state.quiz.questions || state.quiz.questions.length === 0) {
+        c.innerHTML = '<div class="placeholder">该视频没有考核题目（可能是 style 类或分析失败）</div>';
+        return;
+      }
+      const qs = state.quiz.questions;
+      const totalAnswered = Object.keys(state.quizAnswered).length;
+
+      if (state.quizIdx >= qs.length) {
+        c.innerHTML = `
+          <div class="quiz-header">
+            <div class="quiz-progress">已完成 ${totalAnswered}/${qs.length}</div>
+            <div class="quiz-score">得分 ${state.quizScore}/${totalAnswered}</div>
+          </div>
+          <div style="padding:30px 0;text-align:center">
+            <div style="font-size:32px;margin-bottom:14px">🎉</div>
+            <div style="font-size:16px;margin-bottom:18px">已通过本视频所有题目</div>
+            <button class="btn" onclick="resetQuiz()">重新开始</button>
+          </div>
+        `;
+        return;
+      }
+
+      const q = qs[state.quizIdx];
+      const answered = state.quizAnswered[state.quizIdx];
+
+      let html = `
+        <div class="quiz-header">
+          <div class="quiz-progress">第 ${state.quizIdx + 1} / ${qs.length} 题</div>
+          <div class="quiz-score">得分 ${state.quizScore}/${totalAnswered}</div>
+        </div>
+        <div class="quiz-topic">📍 ${escapeHtml(q.topic || "")}</div>
+        <p class="quiz-q clickable" onclick="seekVideo(${q.ts})" title="点击跳到 ${fmtTs(q.ts)} 重看这道题对应的视频片段">${escapeHtml(q.q)}<span class="ts-tag">▶ ${fmtTs(q.ts)}</span></p>
+        <div class="quiz-options">
+      `;
+      q.options.forEach((opt, oi) => {
+        let cls = "quiz-option";
+        const disabled = answered !== undefined ? "disabled" : "";
+        if (answered !== undefined) {
+          if (oi === q.answer_idx) cls += " correct";
+          if (oi === answered && answered !== q.answer_idx) cls += " wrong";
+        }
+        html += `<button class="${cls}" ${disabled} onclick="answerQuiz(${oi})">${String.fromCharCode(65 + oi)}. ${escapeHtml(opt)}</button>`;
+      });
+      html += `</div>`;
+
+      if (answered !== undefined) {
+        const isCorrect = answered === q.answer_idx;
+        html += `
+          <div class="quiz-feedback show">
+            <strong>${isCorrect ? "✓ 答对了" : "✗ 答错了"}</strong>　${escapeHtml(q.explanation)}
+            <div class="quiz-controls">
+              <button class="btn" onclick="seekVideo(${q.ts})">↩ 回放该段（${fmtTs(q.ts)}）</button>
+              <button class="btn btn-primary" onclick="nextQuiz()">${state.quizIdx < qs.length - 1 ? "下一题 →" : "看结果"}</button>
+            </div>
+          </div>
+        `;
+      }
+      c.innerHTML = html;
+    }
+
+    window.answerQuiz = function(idx) {
+      if (state.quizAnswered[state.quizIdx] !== undefined) return;
+      const q = state.quiz.questions[state.quizIdx];
+      state.quizAnswered[state.quizIdx] = idx;
+      if (idx === q.answer_idx) state.quizScore++;
+      saveQuizState();
+      renderQuiz();
+    };
+    window.nextQuiz = function() {
+      state.quizIdx++;
+      saveQuizState();
+      renderQuiz();
+    };
+    window.resetQuiz = function() {
+      state.quizIdx = 0; state.quizScore = 0; state.quizAnswered = {};
+      saveQuizState();
+      renderQuiz();
+    };
+    window.seekVideo = setVideoTime;
+
+    function renderFrames() {
+      const grid = document.getElementById("frames");
+      const empty = document.getElementById("frames-empty");
+      grid.innerHTML = "";
+      const frames = state.framesManifest || [];
+      if (frames.length === 0) {
+        empty.hidden = false;
+        return;
+      }
+      empty.hidden = true;
+      for (const fr of frames) {
+        const card = document.createElement("div");
+        card.className = "frame-card";
+        card.onclick = () => setVideoTime(fr.ts);
+        const img = document.createElement("img");
+        img.loading = "lazy";
+        img.src = `../data/videos/${videoId}/frames/${fr.path}`;
+        card.appendChild(img);
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.innerHTML = `<span class="ts">${fmtTs(fr.ts)}</span> · 第 ${fr.index} 帧 (${fr.source})`;
+        card.appendChild(meta);
+        grid.appendChild(card);
+      }
+    }
+
+    function setupTabs() {
+      document.querySelectorAll(".tab").forEach(t => {
+        t.onclick = () => {
+          document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+          document.querySelectorAll(".tab-panel").forEach(x => x.classList.remove("active"));
+          t.classList.add("active");
+          document.getElementById("tab-" + t.dataset.tab).classList.add("active");
+        };
+      });
+    }
+
+    async function fetchSilent(path) {
+      try {
+        const r = await fetch(path, { cache: "no-store" });
+        if (!r.ok) return null;
+        return r;
+      } catch {
+        return null;
+      }
+    }
+
+    async function init() {
+      const base = `../data/videos/${videoId}`;
+      const metaResp = await fetchSilent(`${base}/meta.json`);
+      if (!metaResp) {
+        document.body.innerHTML = `<div style="padding:40px;text-align:center">找不到 ${videoId} 的 meta.json，可能还没处理完</div>`;
+        return;
+      }
+      state.meta = await metaResp.json();
+      const fullTitle = state.meta.title || videoId;
+      document.getElementById("page-title").textContent = fullTitle;
+      document.title = fullTitle;
+      document.getElementById("floating-title").textContent = fullTitle;
+
+      document.getElementById("video-src").src = `${base}/video.mp4`;
+      const track = document.getElementById("video-track");
+      track.src = `${base}/subtitle.vtt`;
+      document.getElementById("video").load();
+
+      // 加载 outline + framesManifest 后再渲染 notes，让笔记区能穿插章节关键帧
+      const [outResp, manifestResp] = await Promise.all([
+        fetchSilent(`${base}/analysis/outline.json`),
+        fetchSilent(`${base}/frames_manifest.json`),
+      ]);
+      if (outResp) state.outline = await outResp.json();
+      if (manifestResp) state.framesManifest = await manifestResp.json();
+      renderOutline();
+      renderFrames();
+
+      const notesResp = await fetchSilent(`${base}/analysis/notes.md`);
+      const notesMd = notesResp ? await notesResp.text() : "";
+      document.getElementById("notes").innerHTML = renderMarkdown(notesMd);
+
+      const quizResp = await fetchSilent(`${base}/analysis/quiz.json`);
+      if (quizResp) state.quiz = await quizResp.json();
+      loadQuizState();
+      renderQuiz();
+
+      const v = document.getElementById("video");
+      v.addEventListener("timeupdate", () => highlightOutline(v.currentTime));
+      v.addEventListener("loadedmetadata", updateDebugInfo);
+      // 支持 study.html?id=...#t=<秒> 深链：加载后自动跳到时间点（发现流"回看片段"用）
+      v.addEventListener("loadedmetadata", () => {
+        const m = location.hash.match(/t=(\d+(?:\.\d+)?)/);
+        if (m) setVideoTime(parseFloat(m[1]));
+      });
+      updateDebugInfo();
+      setupFloatingPlayer();
+    }
+
+    setupTabs();
+    init();
+  </script>
+</body>
+</html>

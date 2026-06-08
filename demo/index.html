@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>装修知识库 · 主页</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #16181f;
+      --panel-soft: #1c1f28;
+      --text: #f3f5fa;
+      --muted: #8a93a6;
+      --line: rgba(255,255,255,0.08);
+      --accent: #f59e0b;
+      --green: #22c55e;
+      --blue: #3b82f6;
+      --shadow: 0 12px 24px rgba(0,0,0,0.45);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      font-family: "PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+      background: var(--bg); color: var(--text);
+    }
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 32px 24px 64px; }
+    header { margin-bottom: 24px; }
+    header h1 { margin: 0; font-size: 22px; letter-spacing: 0.5px; }
+    header p { color: var(--muted); margin: 6px 0 0; font-size: 13px; }
+
+    .quick-row {
+      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 14px;
+      margin: 22px 0;
+    }
+    @media (max-width: 800px) { .quick-row { grid-template-columns: 1fr; } }
+
+    .discover-hero { display:flex; align-items:center; gap:18px; text-decoration:none; color:inherit;
+      background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(245,158,11,0.04));
+      border:1px solid rgba(245,158,11,0.35); border-radius:16px; padding:20px 22px; margin:22px 0 0;
+      box-shadow: var(--shadow); transition: transform .15s ease; }
+    .discover-hero:hover { transform: translateY(-2px); }
+    .discover-hero .dh-icon { font-size:40px; }
+    .discover-hero .dh-title { font-size:18px; font-weight:700; }
+    .discover-hero .dh-sub { color:var(--muted); font-size:13px; margin-top:4px; line-height:1.5; }
+    .discover-hero .dh-go { margin-left:auto; color:var(--accent); font-weight:600; white-space:nowrap; }
+
+    .card-quick {
+      background: var(--panel); border-radius: 14px;
+      padding: 18px; border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+    .card-quick h3 { margin: 0 0 8px; font-size: 15px; }
+    .card-quick p { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0; }
+    .card-quick code {
+      background: var(--panel-soft); padding: 1px 6px; border-radius: 4px;
+      font-size: 12px; color: var(--accent);
+    }
+    .card-entry {
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 6px;
+      text-decoration: none; cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .card-entry:hover { transform: translateY(-2px); }
+    .card-entry .icon { font-size: 36px; }
+    .card-entry .label { font-size: 16px; color: var(--text); font-weight: 600; }
+    .card-entry .sub { font-size: 12px; color: var(--muted); }
+    .study-entry { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(59,130,246,0.04)); border-color: rgba(59,130,246,0.2); }
+    .style-entry { background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.04)); border-color: rgba(245,158,11,0.2); }
+
+    .section-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin: 28px 0 12px;
+    }
+    .section-head h2 { margin: 0; font-size: 17px; }
+    .section-head .meta { color: var(--muted); font-size: 12px; }
+    .btn {
+      background: var(--panel-soft); color: var(--text);
+      border: 1px solid var(--line); border-radius: 999px;
+      padding: 6px 14px; font-size: 12px; cursor: pointer;
+    }
+    .btn:hover { background: #252834; }
+
+    .videos-grid {
+      display: grid; gap: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+    .video-card {
+      background: var(--panel); border-radius: 12px; overflow: hidden;
+      box-shadow: var(--shadow); border: 1px solid var(--line);
+      transition: transform 0.15s ease;
+      display: block; text-decoration: none; color: inherit;
+    }
+    .video-card:hover { transform: translateY(-2px); border-color: rgba(245,158,11,0.4); }
+    .video-cover {
+      aspect-ratio: 16/9; background: var(--panel-soft); position: relative;
+      background-size: cover; background-position: center;
+    }
+    .video-cover .duration {
+      position: absolute; bottom: 6px; right: 6px;
+      background: rgba(0,0,0,0.7); color: white; font-size: 11px;
+      padding: 2px 6px; border-radius: 4px;
+    }
+    .video-cover .type-chip {
+      position: absolute; top: 6px; left: 6px;
+      padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+    }
+    .type-tutorial { background: var(--blue); color: white; }
+    .type-style    { background: var(--accent); color: #0f1115; }
+    .type-other    { background: rgba(255,255,255,0.18); color: white; }
+    .type-unknown  { background: rgba(255,255,255,0.1);  color: var(--muted); }
+    .video-body { padding: 11px 13px 13px; }
+    .video-title {
+      font-size: 13px; line-height: 1.4;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .video-meta { margin-top: 6px; font-size: 11px; color: var(--muted); }
+
+    .placeholder {
+      text-align: center; padding: 50px 20px;
+      color: var(--muted); border: 1px dashed var(--line); border-radius: 14px;
+    }
+    .placeholder code { background: var(--panel-soft); padding: 2px 6px; border-radius: 4px; color: var(--accent); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>🏠 装修知识库</h1>
+      <p>把你从 B 站等地方下载的装修视频丢进 inbox，系统帮你拆成学习笔记+考核题，或者抽出风格设计帧。</p>
+    </header>
+
+    <a class="discover-hero" href="discover.html">
+      <div class="dh-icon">🔥</div>
+      <div>
+        <div class="dh-title">发现流（新）</div>
+        <div class="dh-sub">封面瀑布流 + 抖音式沉浸刷，边看边喜欢，算法学你的风格口味，越刷越懂你想要什么</div>
+      </div>
+      <div class="dh-go">进入 →</div>
+    </a>
+
+    <div class="quick-row">
+      <div class="card-quick">
+        <h3>怎么添加视频</h3>
+        <p>1. 把 mp4 文件丢进 <code>data/videos/inbox/</code><br/>
+          2. 同名 srt 字幕（如有）也丢进去，会优先用<br/>
+          3. 跑 <code>python scripts/process_inbox.py</code>，没字幕会用 Whisper 自动转写<br/>
+          4. 刷新本页面看处理结果
+        </p>
+      </div>
+      <a class="card-quick card-entry study-entry" href="javascript:void(0)" onclick="goFirstTutorial()">
+        <div class="icon">📚</div>
+        <div class="label">学习中心</div>
+        <div class="sub" id="study-sub">N 个教学视频</div>
+      </a>
+      <a class="card-quick card-entry style-entry" href="style.html">
+        <div class="icon">🎨</div>
+        <div class="label">风格库</div>
+        <div class="sub" id="style-sub">N 张设计帧</div>
+      </a>
+    </div>
+
+    <div class="section-head">
+      <h2>已处理视频</h2>
+      <div>
+        <span class="meta" id="video-count">—</span>
+        <button class="btn" onclick="location.reload()">刷新</button>
+      </div>
+    </div>
+    <div class="videos-grid" id="videos-grid"></div>
+    <div class="placeholder" id="empty" hidden>
+      还没有视频。把 mp4 文件丢进 <code>data/videos/inbox/</code> 然后跑 <code>python scripts/process_inbox.py</code>。
+    </div>
+  </div>
+
+  <script>
+    const state = { videos: [], styleFrames: 0 };
+
+    function fmtDur(s) {
+      s = Math.round(s || 0);
+      const m = Math.floor(s / 60), ss = s % 60;
+      return `${m}:${String(ss).padStart(2,"0")}`;
+    }
+
+    function typeLabel(t) {
+      return { tutorial: "教学", style: "风格", other: "其他", unknown: "处理中" }[t] || t;
+    }
+
+    function render() {
+      const grid = document.getElementById("videos-grid");
+      const empty = document.getElementById("empty");
+      grid.innerHTML = "";
+      if (state.videos.length === 0) {
+        empty.hidden = false;
+        document.getElementById("video-count").textContent = "0 个";
+        return;
+      }
+      empty.hidden = true;
+      document.getElementById("video-count").textContent = state.videos.length + " 个";
+
+      let tutorialCount = 0;
+      for (const v of state.videos) {
+        if (v.type === "tutorial") tutorialCount++;
+        const a = document.createElement("a");
+        a.className = "video-card";
+        if (v.type === "tutorial") {
+          a.href = `study.html?id=${encodeURIComponent(v.video_id)}`;
+        } else if (v.type === "style") {
+          a.href = `style.html?focus=${encodeURIComponent(v.video_id)}`;
+        } else {
+          a.href = "javascript:void(0)";
+        }
+
+        const cover = document.createElement("div");
+        cover.className = "video-cover";
+        if (v.cover) {
+          cover.style.backgroundImage = `url(../${v.cover})`;
+        }
+
+        const chip = document.createElement("div");
+        chip.className = "type-chip type-" + (v.type || "unknown");
+        chip.textContent = typeLabel(v.type);
+        cover.appendChild(chip);
+
+        const dur = document.createElement("div");
+        dur.className = "duration";
+        dur.textContent = fmtDur(v.duration_s);
+        cover.appendChild(dur);
+
+        a.appendChild(cover);
+
+        const body = document.createElement("div");
+        body.className = "video-body";
+        const title = document.createElement("div");
+        title.className = "video-title";
+        title.textContent = v.title;
+        body.appendChild(title);
+        const meta = document.createElement("div");
+        meta.className = "video-meta";
+        const bits = [];
+        if (v.subtitle_source) bits.push("字幕:" + v.subtitle_source);
+        if (v.keyframes_count) bits.push(v.keyframes_count + "帧");
+        meta.textContent = bits.join(" · ");
+        body.appendChild(meta);
+        a.appendChild(body);
+
+        grid.appendChild(a);
+      }
+
+      document.getElementById("study-sub").textContent = `${tutorialCount} 个教学视频`;
+      document.getElementById("style-sub").textContent = `${state.styleFrames} 张设计帧`;
+    }
+
+    function goFirstTutorial() {
+      const v = state.videos.find(x => x.type === "tutorial");
+      if (v) location.href = `study.html?id=${encodeURIComponent(v.video_id)}`;
+      else alert("还没有「教学」类视频。先在 inbox 里丢一个教学视频跑一下。");
+    }
+    window.goFirstTutorial = goFirstTutorial;
+
+    async function init() {
+      try {
+        const r1 = await fetch("../data/video_index.json", { cache: "no-store" });
+        if (r1.ok) {
+          const j = await r1.json();
+          state.videos = j.videos || [];
+        }
+      } catch {}
+      try {
+        const r2 = await fetch("../data/style_index.json", { cache: "no-store" });
+        if (r2.ok) {
+          const j = await r2.json();
+          state.styleFrames = (j.frames || []).length;
+        }
+      } catch {}
+      render();
+    }
+    init();
+  </script>
+</body>
+</html>

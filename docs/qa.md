@@ -48,6 +48,17 @@ python scripts/run_item_structuring.py --mode heuristic --input data/raw/minimax
 python scripts/run_daily_summary.py --mode heuristic --input data/raw/minimax_daily_summary_input.json --output data/normalized/daily_summary.output.json
 ```
 
+## 3.2 运行真实 Minimax（需配置环境变量）
+
+先在项目根放 `.env` 或导出 `MINIMAX_API_KEY` / `MINIMAX_BASE_URL` / `MINIMAX_MODEL`（详情见 docs/minimax-io.md 2.5 节）。
+
+```bash
+python scripts/run_item_structuring.py --mode minimax --input data/raw/minimax_item_inputs.jsonl --output data/normalized/item_structuring.outputs.jsonl --concurrency 4
+python scripts/run_daily_summary.py --mode minimax --input data/raw/minimax_daily_summary_input.json --output data/normalized/daily_summary.output.json
+```
+
+如果 key 未配置或 API 失败，会自动降级到 heuristic，链路不断；行内 `_source` 字段标注每条来源（minimax / cache / heuristic_fallback）。
+
 把产出回注到 report.json：
 
 ```bash

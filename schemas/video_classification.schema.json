@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/decoration-inspiration/schemas/video_classification.schema.json",
+  "title": "VideoClassification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "confidence", "reasoning", "style_hint", "space_hint"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["tutorial", "style", "other"]
+    },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "reasoning": { "type": "string", "minLength": 1 },
+    "style_hint": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "space_hint": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}
